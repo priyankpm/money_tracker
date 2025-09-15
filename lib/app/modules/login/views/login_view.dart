@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
+import 'package:money_tracker/app/routes/app_pages.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_images.dart';
 import 'package:money_tracker/config/app_text.dart';
@@ -21,13 +24,18 @@ class LoginView extends GetView<LoginController> {
           children: [
             Image.asset(AppImages.loginImage, height: 613.h, fit: BoxFit.fill),
             Spacer(),
-            AppText.introText.styleBold(
-              color: AppColors.primaryColor,
-              size: 30.sp,
-              align: TextAlign.center,
-            ),
+            (Platform.isAndroid ? AppText.introTextAn : AppText.introText)
+                .styleBold(
+                  color: AppColors.primaryColor,
+                  size: Platform.isAndroid ? 30.sp : 20.sp,
+                  align: TextAlign.center,
+                ),
             Spacer(),
+
             AppButton(
+              onTap: () {
+                Get.offAllNamed(Routes.HOME);
+              },
               child: Center(
                 child: Row(
                   children: [
@@ -37,13 +45,45 @@ class LoginView extends GetView<LoginController> {
                       width: 35.h,
                     ),
                     Spacer(),
-                    AppText.loginButtonText.styleMedium(color: Colors.white),
+                    AppText.loginButtonText.styleMedium(
+                      color: AppColors.whiteColor,
+                    ),
                     22.h.addWSpace(),
                     Spacer(),
                   ],
                 ),
               ),
             ),
+
+            if (Platform.isIOS) ...[
+              18.h.addHSpace(),
+              AppButton(
+                onTap: () {
+                  Get.offAllNamed(Routes.HOME);
+                },
+                buttonColor: AppColors.whiteColor,
+                child: Center(
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 3.h),
+                        child: Image.asset(
+                          AppImages.iosImage,
+                          height: 35.h,
+                          width: 35.h,
+                        ),
+                      ),
+                      Spacer(),
+                      AppText.appleButtonText.styleMedium(
+                        color: AppColors.blackColor,
+                      ),
+                      22.h.addWSpace(),
+                      Spacer(),
+                    ],
+                  ),
+                ),
+              ),
+            ],
             50.h.addHSpace(),
           ],
         ),
