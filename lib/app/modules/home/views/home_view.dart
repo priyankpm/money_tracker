@@ -14,6 +14,15 @@ class HomeView extends GetView<HomeController> {
     return SafeArea(
       top: false,
       child: Scaffold(
+        floatingActionButton: Container(
+          height: 60.h,
+          width: 60.h,
+          decoration: BoxDecoration(
+            color: AppColors.primaryColor,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(Icons.add, color: AppColors.whiteColor, size: 35.h),
+        ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -31,16 +40,27 @@ class HomeView extends GetView<HomeController> {
                   ),
                   child: Padding(
                     padding: EdgeInsets.only(top: 80.h, left: 20.w),
-                    child: Column(
+                    child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        AppText.goodAfternoon.styleMedium(
-                          size: 14.sp,
-                          color: AppColors.whiteColor,
-                        ),
-                        AppText.name.styleSemiBold(
-                          size: 20.sp,
-                          color: AppColors.whiteColor,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                AppText.goodAfternoon.styleMedium(
+                                  size: 16.sp,
+                                  color: AppColors.whiteColor,
+                                ),
+                                5.w.addWSpace(),
+                                Image.asset(AppImages.hello, height: 26.h),
+                              ],
+                            ),
+                            AppText.name.styleSemiBold(
+                              size: 20.sp,
+                              color: AppColors.whiteColor,
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -140,7 +160,11 @@ class HomeView extends GetView<HomeController> {
             ),
             Padding(
               padding: EdgeInsets.only(
-                left: 22.w,right: 22.w,top: 100.h,bottom: 10.h),
+                left: 22.w,
+                right: 22.w,
+                top: 100.h,
+                bottom: 10.h,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,

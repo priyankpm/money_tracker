@@ -1,4 +1,7 @@
 import 'package:get/get.dart';
+
+import '../modules/bottombar/bindings/bottombar_binding.dart';
+import '../modules/bottombar/views/bottombar_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/login/bindings/login_binding.dart';
@@ -31,6 +34,11 @@ class AppPages {
       transition: Transition.fadeIn,
       page: () => const HomeView(),
       binding: HomeBinding(),
+    ),
+    GetPage(
+      name: _Paths.BOTTOMBAR,
+      page: () => const BottombarView(),
+      binding: BottombarBinding(),
     ),
   ];
 }

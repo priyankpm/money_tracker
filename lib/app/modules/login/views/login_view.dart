@@ -34,7 +34,7 @@ class LoginView extends GetView<LoginController> {
 
             AppButton(
               onTap: () {
-                Get.offAllNamed(Routes.HOME);
+                Get.offAllNamed(Routes.BOTTOMBAR);
               },
               child: Center(
                 child: Row(
@@ -59,7 +59,7 @@ class LoginView extends GetView<LoginController> {
               18.h.addHSpace(),
               AppButton(
                 onTap: () {
-                  Get.offAllNamed(Routes.HOME);
+                  Get.offAllNamed(Routes.BOTTOMBAR);
                 },
                 buttonColor: AppColors.whiteColor,
                 child: Center(
