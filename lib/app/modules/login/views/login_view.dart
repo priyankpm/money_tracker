@@ -17,65 +17,37 @@ class LoginView extends GetView<LoginController> {
   const LoginView({super.key});
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Scaffold(
-        body: Column(
-          children: [
-            Image.asset(AppImages.loginImage, height: 613.h, fit: BoxFit.fill),
-            Spacer(),
-            (Platform.isAndroid ? AppText.introTextAn : AppText.introText)
-                .styleBold(
-                  color: AppColors.primaryColor,
-                  size: Platform.isAndroid ? 30.sp : 20.sp,
-                  align: TextAlign.center,
-                ),
-            Spacer(),
+    return Container(color: AppColors.whiteColor,
+      child: SafeArea(
+        top: false,
+        child: Scaffold(backgroundColor: AppColors.whiteColor,
+          body: Column(
+            children: [
+              Image.asset(AppImages.loginImage, height: 613.h, fit: BoxFit.fill),
+              Spacer(),
+              (Platform.isAndroid ? AppText.introTextAn : AppText.introText)
+                  .styleBold(
+                    color: AppColors.primaryColor,
+                    size: Platform.isAndroid ? 30.sp : 20.sp,
+                    align: TextAlign.center,
+                  ),
+              Spacer(),
 
-            AppButton(
-              onTap: () {
-                Get.offAllNamed(Routes.BOTTOMBAR);
-              },
-              child: Center(
-                child: Row(
-                  children: [
-                    Image.asset(
-                      AppImages.googleImage,
-                      height: 35.h,
-                      width: 35.h,
-                    ),
-                    Spacer(),
-                    AppText.loginButtonText.styleMedium(
-                      color: AppColors.whiteColor,
-                    ),
-                    22.h.addWSpace(),
-                    Spacer(),
-                  ],
-                ),
-              ),
-            ),
-
-            if (Platform.isIOS) ...[
-              18.h.addHSpace(),
               AppButton(
                 onTap: () {
                   Get.offAllNamed(Routes.BOTTOMBAR);
                 },
-                buttonColor: AppColors.whiteColor,
                 child: Center(
                   child: Row(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 3.h),
-                        child: Image.asset(
-                          AppImages.iosImage,
-                          height: 35.h,
-                          width: 35.h,
-                        ),
+                      Image.asset(
+                        AppImages.googleImage,
+                        height: 30.h,
+                        width: 30.h,
                       ),
                       Spacer(),
-                      AppText.appleButtonText.styleMedium(
-                        color: AppColors.blackColor,
+                      AppText.loginButtonText.styleMedium(
+                        color: AppColors.whiteColor,
                       ),
                       22.h.addWSpace(),
                       Spacer(),
@@ -83,9 +55,39 @@ class LoginView extends GetView<LoginController> {
                   ),
                 ),
               ),
+
+              if (Platform.isIOS) ...[
+                18.h.addHSpace(),
+                AppButton(
+                  onTap: () {
+                    Get.offAllNamed(Routes.BOTTOMBAR);
+                  },
+                  buttonColor: AppColors.whiteColor,
+                  child: Center(
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 3.h),
+                          child: Image.asset(
+                            AppImages.iosImage,
+                            height: 30.h,
+                            width: 30.h,
+                          ),
+                        ),
+                        Spacer(),
+                        AppText.appleButtonText.styleMedium(
+                          color: AppColors.blackColor,
+                        ),
+                        22.h.addWSpace(),
+                        Spacer(),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+              20.h.addHSpace(),
             ],
-            50.h.addHSpace(),
-          ],
+          ),
         ),
       ),
     );

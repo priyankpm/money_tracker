@@ -34,7 +34,7 @@ extension FontStyle on String {
       textAlign: align,
       style: TextStyle(
         color: color ?? Colors.black,
-        fontSize: size ?? 18.sp,
+        fontSize: size ?? 16.sp,
         fontWeight: weight ?? FontWeight.w400,
         decoration: decoration ?? TextDecoration.none,
         fontFamily: "Montserrat",

@@ -16,4 +16,5 @@ class AppImages {
   static const chart1 = "${pngPath}chart_1.svg";
   static const profile1 = "${pngPath}user_1.svg";
   static const hello = "${pngPath}hand.png";
+  static const avtar = "${pngPath}avtar.png";
 }

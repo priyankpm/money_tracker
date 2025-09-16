@@ -14,4 +14,6 @@ class AppText {
   static const String expense = "Expenses";
   static const String transactionsHistory = "Transactions History";
   static const String seeAll = "See all";
+  static const String profile = "Profile";
+  static const String updateProfile = "Update Profile";
 }
