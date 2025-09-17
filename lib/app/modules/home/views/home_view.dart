@@ -208,7 +208,7 @@ class HomeView extends GetView<HomeController> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    AppText.transactionsHistory.styleSemiBold(
+                    AppText.todayHistory.styleSemiBold(
                       color: AppColors.blackColor,
                     ),
                     AppText.seeAll.styleRegular(

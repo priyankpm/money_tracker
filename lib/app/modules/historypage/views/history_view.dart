@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-
 import 'package:get/get.dart';
 import 'package:money_tracker/config/app_color.dart';
-import 'package:money_tracker/config/app_images.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/extenstion.dart';
-
 import '../controllers/history_controller.dart';
 
 class HistoryView extends GetView<HistoryController> {
@@ -24,32 +20,15 @@ class HistoryView extends GetView<HistoryController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AppBar(
-                actions: [
-                  Padding(
-                    padding: EdgeInsets.only(right: 22.w),
-                    child: PopupMenuButton(
-                      icon: Icon(
-                        Icons.filter,
-                        color: AppColors.primaryColor,
-                      ),
-                      itemBuilder: (context) {
-                        return [
-                          PopupMenuItem(child: Text("data")),
-                          PopupMenuItem(child: Text("data")),
-                          PopupMenuItem(child: Text("data")),
-                        ];
-                      },
-                    ),
-                  ),
-                ],
                 surfaceTintColor: Colors.transparent,
                 backgroundColor: Colors.transparent,
                 centerTitle: true,
-                title: AppText.history.styleSemiBold(
+                title: AppText.transactionsHistory.styleSemiBold(
                   size: 20.sp,
                   color: AppColors.primaryColor,
                 ),
               ),
+
               Obx(
                 () => Container(
                   height: 45.h,
@@ -97,18 +76,87 @@ class HistoryView extends GetView<HistoryController> {
                   ),
                 ),
               ),
+              Padding(padding: EdgeInsets.only(bottom: 5.h)),
+              Obx(() {
+                return Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.lightColor,
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  margin: EdgeInsets.symmetric(horizontal: 22.w),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        splashColor: Colors.transparent,
+                        title: Row(
+                          children: [
+                            Icon(
+                              Icons.filter_list,
+                              color: AppColors.primaryColor,
+                            ),
+                            10.w.addWSpace(),
+                            "Filter: ${controller.selectedFilter.value}"
+                                .styleSemiBold(),
+                          ],
+                        ),
+                        trailing: Icon(
+                          controller.isExpanded.value
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                        ),
+                        onTap: () {
+                          controller.isExpanded.value =
+                              !controller.isExpanded.value;
+                        },
+                      ),
+
+                      AnimatedSize(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                        child:
+                            controller.isExpanded.value
+                                ? Padding(
+                                  padding: EdgeInsets.only(bottom: 10.h),
+                                  child: RadioGroup<String>(
+                                    groupValue: controller.selectedFilter.value,
+                                    onChanged: (String? v) {
+                                      if (v == null) return;
+                                      controller.selectedFilter.value = v;
+                                      controller.isExpanded.value = false;
+                                    },
+                                    child: Column(
+                                      children:
+                                          controller.filters.map((filter) {
+                                            return RadioListTile<String>(
+                                              value: filter,
+                                              title: filter.styleMedium(
+                                                color: AppColors.primaryColor,
+                                              ),
+                                            );
+                                          }).toList(),
+                                    ),
+                                  ),
+                                )
+                                : const SizedBox.shrink(),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+              Padding(padding: EdgeInsets.only(bottom: 5.h)),
               Expanded(
                 child: SingleChildScrollView(
                   physics: BouncingScrollPhysics(),
                   child: Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: 22.w,
-                      vertical: 20.h,
+                      vertical: 10.h,
                     ),
                     child: ListView.separated(
                       physics: NeverScrollableScrollPhysics(),
-                      separatorBuilder: (context, index) => Divider(height: 30.h,),
-                      padding: EdgeInsets.only(bottom: 10.h),
+                      separatorBuilder:
+                          (context, index) => Divider(height: 30.h),
+                      padding: EdgeInsets.only(bottom: 20.h),
                       itemCount: 10,
                       shrinkWrap: true,
                       itemBuilder: (context, index) {

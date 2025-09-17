@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:get/get.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_images.dart';
@@ -39,12 +38,83 @@ class ProfileView extends GetView<ProfileController> {
                       ),
                       child: AppBar(
                         actions: [
-                          Padding(
-                            padding: EdgeInsets.only(right: 22.w),
-                            child: Icon(
-                              Icons.exit_to_app,
+                          PopupMenuButton(
+                            color: AppColors.whiteColor,
+                            icon: Icon(
+                              Icons.more_vert,
                               color: AppColors.whiteColor,
                             ),
+                            itemBuilder:
+                                (context) => [
+                                  PopupMenuItem(
+                                    onTap: () async {
+                                      Future.delayed(
+                                        Duration(milliseconds: 100),
+                                      ).then((value) {});
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.only(right: 22.w),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.exit_to_app,
+                                            color: AppColors.primaryColor,
+                                          ),
+                                          10.w.addWSpace(),
+                                          AppText.logout.styleMedium(
+                                            color: AppColors.primaryColor,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    onTap: () async {
+                                      Future.delayed(
+                                        Duration(milliseconds: 100),
+                                      ).then((value) {});
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.only(right: 22.w),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.delete,
+                                            color: AppColors.primaryColor,
+                                          ),
+                                          10.w.addWSpace(),
+                                          AppText.deleteAccount.styleMedium(
+                                            color: AppColors.primaryColor,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    onTap: () async {
+                                      Future.delayed(
+                                        Duration(milliseconds: 100),
+                                      ).then((value) {
+                                        Get.back();
+                                      });
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.only(right: 22.w),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.close,
+                                            color: AppColors.primaryColor,
+                                          ),
+                                          10.w.addWSpace(),
+                                          AppText.close.styleMedium(
+                                            color: AppColors.primaryColor,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
                           ),
                         ],
                         surfaceTintColor: Colors.transparent,
@@ -150,6 +220,35 @@ class ProfileView extends GetView<ProfileController> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> showLogoutConfirmationDialog(BuildContext context) async {
+    await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title:AppText.areYouSure.styleSemiBold(),
+          content: AppText.logoutMsg.styleMedium(),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF1B183E),
+              ),
+              child: const Text("Logout"),
+            ),
+          ],
+        );
+      },
     );
   }
 }

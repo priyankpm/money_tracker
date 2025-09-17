@@ -6,6 +6,19 @@ class HistoryController extends GetxController {
 
   updateType(value) => type.value = value;
   final count = 0.obs;
+
+  var isExpanded = false.obs;
+  var selectedFilter = "All".obs;
+
+  final filters = [
+    "All",
+    "Today",
+    "Yesterday",
+    "This Week",
+    "This Month",
+    "This Year",
+  ];
+
   @override
   void onInit() {
     super.onInit();
