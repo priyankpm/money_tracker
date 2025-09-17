@@ -70,7 +70,7 @@ class LoginView extends GetView<LoginController> {
 
                         AppButton(
                           onTap: () {
-                            Get.offAllNamed(Routes.BOTTOMBAR);
+                            controller.loginWithGoogle(context: context);
                           },
                           borderColor: AppColors.whiteColor,
                           child: Center(
