@@ -4,6 +4,10 @@ import '../modules/addEntry/bindings/add_entry_binding.dart';
 import '../modules/addEntry/views/add_entry_view.dart';
 import '../modules/bottombar/bindings/bottombar_binding.dart';
 import '../modules/bottombar/views/bottombar_view.dart';
+import '../modules/history/bindings/history_binding.dart';
+import '../modules/history/views/history_view.dart';
+import '../modules/historypage/bindings/historypage_binding.dart';
+import '../modules/historypage/views/historypage_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/intro/bindings/intro_binding.dart';
@@ -64,6 +68,16 @@ class AppPages {
       transition: Transition.fadeIn,
       page: () => const AddEntryView(),
       binding: AddEntryBinding(),
+    ),
+    GetPage(
+      name: _Paths.HISTORY,
+      page: () => const HistoryView(),
+      binding: HistoryBinding(),
+    ),
+    GetPage(
+      name: _Paths.HISTORYPAGE,
+      page: () => const HistorypageView(),
+      binding: HistorypageBinding(),
     ),
   ];
 }

@@ -24,6 +24,5 @@ class AppImages {
   static const profile1 = "${iconPath}user_1.svg";
   static const hello = "${imagePath}hand.png";
 
-  static const avtar = "${imagePath}avtar.png";
   static const profileBanner = "${imagePath}profile_banner.png";
 }

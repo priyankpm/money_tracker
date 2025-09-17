@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:advanced_salomon_bottom_bar/advanced_salomon_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -32,7 +33,6 @@ class BottombarView extends GetView<BottombarController> {
   final List<Widget> pages = const [
     HomeView(),
     Center(child: Text("History")),
-    Center(child: Text("Chart")),
     ProfileView(),
   ];
 
@@ -47,37 +47,63 @@ class BottombarView extends GetView<BottombarController> {
           child: Scaffold(
             backgroundColor: AppColors.whiteColor,
             body: pages[controller.selectedIndex.value],
-            bottomNavigationBar: Padding(
-              padding: EdgeInsets.only(bottom: Platform.isIOS ? 15.h : 0),
-              child: Container(
-                height: 60.h,
-                padding: EdgeInsets.symmetric(horizontal: 35.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12.withValues(alpha: 0.05),
-                      blurRadius: 6,
-                      offset: const Offset(0, -5),
-                    ),
-                  ],
+            bottomNavigationBar: AdvancedSalomonBottomBar(
+              currentIndex: controller.selectedIndex.value,
+              onTap: (i) => controller.changeTab(i),
+              items: [
+                /// Home
+                AdvancedSalomonBottomBarItem(
+                  icon: Icon(Icons.home),
+                  title: Text("Home"),
+                  selectedColor: Colors.purple,
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: List.generate(icons.length, (index) {
-                    final isSelected = index == controller.selectedIndex.value;
-                    return GestureDetector(
-                      onTap: () => controller.changeTab(index),
-                      child: SvgPicture.asset(
-                        isSelected ? icons1[index] : icons[index],
-                        height: index == 1 ? 34.h : 30.h,
-                        width: index == 1 ? 34.h : 30.h,
-                      ),
-                    );
-                  }),
+
+                /// Likes
+                AdvancedSalomonBottomBarItem(
+                  icon: Icon(Icons.favorite_border),
+                  title: Text("Likes"),
+                  selectedColor: Colors.pink,
                 ),
-              ),
+
+                /// Profile
+                AdvancedSalomonBottomBarItem(
+                  icon: Icon(Icons.person),
+                  title: Text("Profile"),
+                  selectedColor: Colors.teal,
+                ),
+              ],
             ),
+            // bottomNavigationBar: Padding(
+            //   padding: EdgeInsets.only(bottom: Platform.isIOS ? 15.h : 0),
+            //   child: Container(
+            //     height: 60.h,
+            //     padding: EdgeInsets.symmetric(horizontal: 35.w),
+            //     decoration: BoxDecoration(
+            //       color: Colors.white,
+            //       boxShadow: [
+            //         BoxShadow(
+            //           color: Colors.black12.withValues(alpha: 0.05),
+            //           blurRadius: 6,
+            //           offset: const Offset(0, -5),
+            //         ),
+            //       ],
+            //     ),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //       children: List.generate(icons.length, (index) {
+            //         final isSelected = index == controller.selectedIndex.value;
+            //         return GestureDetector(
+            //           onTap: () => controller.changeTab(index),
+            //           child: SvgPicture.asset(
+            //             isSelected ? icons1[index] : icons[index],
+            //             height: index == 1 ? 34.h : 30.h,
+            //             width: index == 1 ? 34.h : 30.h,
+            //           ),
+            //         );
+            //       }),
+            //     ),
+            //   ),
+            // ),
           ),
         ),
       ),

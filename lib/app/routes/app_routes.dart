@@ -10,6 +10,8 @@ abstract class Routes {
   static const PROFILE = _Paths.PROFILE;
   static const INTRO = _Paths.INTRO;
   static const ADD_ENTRY = _Paths.ADD_ENTRY;
+  static const HISTORY = _Paths.HISTORY;
+  static const HISTORYPAGE = _Paths.HISTORYPAGE;
 }
 
 abstract class _Paths {
@@ -21,4 +23,6 @@ abstract class _Paths {
   static const PROFILE = '/profile';
   static const INTRO = '/intro';
   static const ADD_ENTRY = '/add-entry';
+  static const HISTORY = '/history';
+  static const HISTORYPAGE = '/historypage';
 }
