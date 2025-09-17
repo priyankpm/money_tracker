@@ -6,7 +6,7 @@ class AppButton extends StatelessWidget {
   final Widget child;
   final Color? buttonColor;
   final Color? borderColor;
-  final bool? zeroPadding;
+
   final void Function()? onTap;
   const AppButton({
     super.key,
@@ -14,7 +14,6 @@ class AppButton extends StatelessWidget {
     this.buttonColor,
     this.borderColor,
     this.onTap,
-    this.zeroPadding,
   });
 
   @override
@@ -22,18 +21,15 @@ class AppButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 55.h,
-        margin: EdgeInsets.symmetric(
-          horizontal: (zeroPadding ?? false) ? 0 : 28.w,
-        ),
+        height: 60.h,
         padding: EdgeInsets.symmetric(horizontal: 15.w),
         decoration: BoxDecoration(
           border: Border.all(color: borderColor ?? AppColors.primaryColor),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primaryColor.withValues(alpha: 0.3),
+              color: AppColors.primaryColor.withValues(alpha: 0.2),
               blurRadius: 10,
-              offset: Offset(0, 6),
+              offset: Offset(0, 2),
             ),
           ],
           color: buttonColor ?? AppColors.primaryColor,

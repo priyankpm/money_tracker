@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:money_tracker/app/routes/app_pages.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_images.dart';
 import 'package:money_tracker/config/app_text.dart';
@@ -11,18 +13,25 @@ class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
   @override
   Widget build(BuildContext context) {
-    return Container(color: AppColors.whiteColor,
+    return Container(
+      color: AppColors.whiteColor,
       child: SafeArea(
         top: false,
-        child: Scaffold(backgroundColor: AppColors.whiteColor,
-          floatingActionButton: Container(
-            height: 60.h,
-            width: 60.h,
-            decoration: BoxDecoration(
-              color: AppColors.primaryColor,
-              shape: BoxShape.circle,
+        child: Scaffold(
+          backgroundColor: AppColors.whiteColor,
+          floatingActionButton: GestureDetector(
+            onTap: () {
+              Get.toNamed(Routes.ADD_ENTRY);
+            },
+            child: Container(
+              height: 60.h,
+              width: 60.h,
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.add, color: AppColors.whiteColor, size: 35.h),
             ),
-            child: Icon(Icons.add, color: AppColors.whiteColor, size: 35.h),
           ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,87 +79,116 @@ class HomeView extends GetView<HomeController> {
                   Positioned(
                     right: 20.w,
                     left: 20.w,
-                    bottom: -65.h,
+                    bottom: -75.h,
                     child: Container(
-                      height: 180.h,
+                      height: 201.h,
                       decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(AppImages.homeBanner),
+                        ),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.primaryColor.withValues(alpha: 0.3),
+                            color: AppColors.primaryColor.withValues(
+                              alpha: 0.3,
+                            ),
                             blurRadius: 10,
                             offset: Offset(0, 6),
                           ),
                         ],
-                        color: AppColors.secondaryColor,
-                        borderRadius: BorderRadius.all(Radius.circular(20.r)),
                       ),
                       child: Padding(
-                        padding: EdgeInsets.all(20.h),
+                        padding: EdgeInsets.all(15.h),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            AppText.totalBalance.styleSemiBold(
-                              size: 16.sp,
-                              color: AppColors.whiteColor,
-                            ),
-                            AppText.amount.styleBold(
-                              size: 22.sp,
-                              color: AppColors.whiteColor,
-                            ),
-                            Spacer(),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Row(
+                                    Container(
+                                      height: 25.h,
+                                      width: 25.h,
+                                      margin: EdgeInsets.only(right: 8.w),
+                                      child: SvgPicture.asset(
+                                        AppImages.upArrow,
+                                      ),
+                                    ),
+
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Container(
-                                          height: 26.h,
-                                          width: 26.h,
-                                          margin: EdgeInsets.only(right: 8.w),
-                                          child: Image.asset(AppImages.downArrow),
-                                        ),
-                                        AppText.expense.styleSemiBold(
+                                        AppText.income.styleSemiBold(
                                           size: 14.sp,
+                                          color: AppColors.greenColor,
+                                        ),
+                                        2.h.addHSpace(),
+                                        AppText.amount1.styleBold(
+                                          size: 16.sp,
                                           color: AppColors.whiteColor,
                                         ),
                                       ],
-                                    ),
-                                    6.h.addHSpace(),
-                                    AppText.amount1.styleBold(
-                                      size: 18.sp,
-                                      color: AppColors.whiteColor,
                                     ),
                                   ],
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Row(
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
                                       children: [
-                                        Container(
-                                          height: 26.h,
-                                          width: 26.h,
-                                          margin: EdgeInsets.only(right: 8.w),
-
-                                          child: Image.asset(AppImages.upArrow),
-                                        ),
                                         AppText.expense.styleSemiBold(
                                           size: 14.sp,
+                                          color: AppColors.redColor,
+                                        ),
+                                        2.h.addHSpace(),
+                                        AppText.amount2.styleBold(
+                                          size: 16.sp,
                                           color: AppColors.whiteColor,
                                         ),
                                       ],
                                     ),
-                                    6.h.addHSpace(),
-                                    AppText.amount2.styleBold(
-                                      size: 18.sp,
-                                      color: AppColors.whiteColor,
+                                    Container(
+                                      height: 25.h,
+                                      width: 25.h,
+                                      margin: EdgeInsets.only(left: 8.w),
+                                      child: SvgPicture.asset(
+                                        AppImages.downArrow,
+                                      ),
                                     ),
                                   ],
                                 ),
                               ],
+                            ),
+                            Spacer(),
+
+                            Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      AppText.totalBalance.styleSemiBold(
+                                        size: 16.sp,
+                                        color: AppColors.whiteColor,
+                                      ),
+                                      Icon(
+                                        Icons.keyboard_arrow_up,
+                                        color: AppColors.whiteColor,
+                                      ),
+                                    ],
+                                  ),
+                                  5.h.addHSpace(),
+                                  AppText.amount.styleBold(
+                                    size: 25.sp,
+                                    color: AppColors.whiteColor,
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -163,7 +201,7 @@ class HomeView extends GetView<HomeController> {
                 padding: EdgeInsets.only(
                   left: 22.w,
                   right: 22.w,
-                  top: 90.h,
+                  top: 100.h,
                   bottom: 20.h,
                 ),
                 child: Row(
@@ -222,7 +260,8 @@ class HomeView extends GetView<HomeController> {
                               ],
                             ),
                             Spacer(),
-                            "+ \$ 850.00".styleSemiBold(size: 14.sp,
+                            "+ \$ 850.00".styleSemiBold(
+                              size: 14.sp,
                               color:
                                   index % 2 == 0
                                       ? AppColors.greenColor

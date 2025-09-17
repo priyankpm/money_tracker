@@ -10,6 +10,6 @@ class SplashController extends GetxController {
   Future<void> navigateToOnboard() async {
     await Future.delayed(
       const Duration(seconds: 2),
-    ).then((value) => Get.toNamed(Routes.LOGIN));
+    ).then((value) => Get.toNamed(Routes.INTRO));
   }
 }
