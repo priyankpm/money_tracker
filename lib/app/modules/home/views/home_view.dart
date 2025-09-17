@@ -40,16 +40,16 @@ class HomeView extends GetView<HomeController> {
                 clipBehavior: Clip.none,
                 children: [
                   Container(
-                    height: 287.h,
+                    height: 255.h,
                     width: 414.w,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage(AppImages.headerImage),
+                        image: AssetImage(AppImages.profileBanner),
                         fit: BoxFit.fill,
                       ),
                     ),
                     child: Padding(
-                      padding: EdgeInsets.only(top: 80.h, left: 20.w),
+                      padding: EdgeInsets.only(top: 60.h, left: 20.w),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -112,7 +112,7 @@ class HomeView extends GetView<HomeController> {
                                       width: 25.h,
                                       margin: EdgeInsets.only(right: 8.w),
                                       child: SvgPicture.asset(
-                                        AppImages.upArrow,
+                                        AppImages.upArrowIcon,
                                       ),
                                     ),
 
@@ -156,7 +156,7 @@ class HomeView extends GetView<HomeController> {
                                       width: 25.h,
                                       margin: EdgeInsets.only(left: 8.w),
                                       child: SvgPicture.asset(
-                                        AppImages.downArrow,
+                                        AppImages.downArrowIcon,
                                       ),
                                     ),
                                   ],
@@ -225,7 +225,7 @@ class HomeView extends GetView<HomeController> {
                     padding: EdgeInsets.symmetric(horizontal: 22.w),
                     child: ListView.separated(
                       physics: NeverScrollableScrollPhysics(),
-                      separatorBuilder: (context, index) => 16.h.addHSpace(),
+                      separatorBuilder: (context, index) => Divider(height: 30.h,),
                       padding: EdgeInsets.only(bottom: 70.h),
                       itemCount: 10,
                       shrinkWrap: true,

@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
 
-class HistorypageController extends GetxController {
-  //TODO: Implement HistorypageController
+class HistoryController extends GetxController {
+  RxString type = "Income".obs;
+  List<String> types = ["Income", "Expense"];
 
+  updateType(value) => type.value = value;
   final count = 0.obs;
   @override
   void onInit() {

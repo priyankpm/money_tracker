@@ -1,13 +1,12 @@
 import 'package:get/get.dart';
+import 'package:money_tracker/app/modules/historypage/controllers/history_controller.dart';
 
 import '../modules/addEntry/bindings/add_entry_binding.dart';
 import '../modules/addEntry/views/add_entry_view.dart';
 import '../modules/bottombar/bindings/bottombar_binding.dart';
 import '../modules/bottombar/views/bottombar_view.dart';
-import '../modules/history/bindings/history_binding.dart';
-import '../modules/history/views/history_view.dart';
-import '../modules/historypage/bindings/historypage_binding.dart';
-import '../modules/historypage/views/historypage_view.dart';
+import '../modules/historypage/bindings/history_binding.dart';
+import '../modules/historypage/views/history_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/intro/bindings/intro_binding.dart';
@@ -76,8 +75,8 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.HISTORYPAGE,
-      page: () => const HistorypageView(),
-      binding: HistorypageBinding(),
+      page: () => const HistoryView(),
+      binding: HistoryBinding(),
     ),
   ];
 }

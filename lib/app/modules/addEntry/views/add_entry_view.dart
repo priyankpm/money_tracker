@@ -25,11 +25,11 @@ class AddEntryView extends GetView<AddEntryController> {
               Container(height: MediaQuery.of(context).size.height),
               Positioned(
                 child: Container(
-                  height: 287.h,
+                  height: 255.h,
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage(AppImages.headerImage),
+                      image: AssetImage(AppImages.profileBanner),
                       fit: BoxFit.fill,
                     ),
                   ),

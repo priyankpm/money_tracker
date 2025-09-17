@@ -6,40 +6,35 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:money_tracker/app/modules/historypage/views/history_view.dart';
 import 'package:money_tracker/app/modules/home/views/home_view.dart';
 import 'package:money_tracker/app/modules/profile/views/profile_view.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_images.dart';
+import 'package:money_tracker/config/app_text.dart';
+import 'package:money_tracker/utils/extenstion.dart';
 
 import '../controllers/bottombar_controller.dart';
 
 class BottombarView extends GetView<BottombarController> {
   const BottombarView({super.key});
 
-  final List<String> icons = const [
-    AppImages.home,
-    AppImages.history,
-    AppImages.chart,
-    AppImages.profile,
-  ];
-
   final List<String> icons1 = const [
     AppImages.home1,
     AppImages.history1,
-    AppImages.chart1,
     AppImages.profile1,
   ];
 
   final List<Widget> pages = const [
     HomeView(),
-    Center(child: Text("History")),
+    HistoryView(),
     ProfileView(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.whiteColor,
+      color: AppColors.primaryColor,
       child: Obx(
         () => SafeArea(
           top: false,
@@ -47,63 +42,62 @@ class BottombarView extends GetView<BottombarController> {
           child: Scaffold(
             backgroundColor: AppColors.whiteColor,
             body: pages[controller.selectedIndex.value],
-            bottomNavigationBar: AdvancedSalomonBottomBar(
-              currentIndex: controller.selectedIndex.value,
-              onTap: (i) => controller.changeTab(i),
-              items: [
-                /// Home
-                AdvancedSalomonBottomBarItem(
-                  icon: Icon(Icons.home),
-                  title: Text("Home"),
-                  selectedColor: Colors.purple,
-                ),
+            bottomNavigationBar: Container(
+              color: AppColors.primaryColor,
+              padding: EdgeInsets.only(top: 10.h),
+              child: AdvancedSalomonBottomBar(
+                decoration: BoxDecoration(color: AppColors.primaryColor),
+                margin: EdgeInsets.symmetric(horizontal: 28.w),
+                currentIndex: controller.selectedIndex.value,
+                onTap: (i) => controller.changeTab(i),
+                items: [
+                  /// Home
+                  AdvancedSalomonBottomBarItem(
+                    icon: SvgPicture.asset(
+                      icons1[0],
+                      height: 22.h,
+                      width: 22.h,
+                      color: AppColors.whiteColor,
+                    ),
+                    title: AppText.dashboard.styleSemiBold(
+                      color: AppColors.whiteColor,
+                      size: 14.sp,
+                    ),
+                    selectedColor: AppColors.whiteColor,
+                  ),
 
-                /// Likes
-                AdvancedSalomonBottomBarItem(
-                  icon: Icon(Icons.favorite_border),
-                  title: Text("Likes"),
-                  selectedColor: Colors.pink,
-                ),
+                  /// Likes
+                  AdvancedSalomonBottomBarItem(
+                    icon: SvgPicture.asset(
+                      icons1[1],
+                      height: 22.h,
+                      width: 22.h,
+                      color: AppColors.whiteColor,
+                    ),
+                    title: AppText.history.styleSemiBold(
+                      color: AppColors.whiteColor,
+                      size: 14.sp,
+                    ),
+                    selectedColor: AppColors.whiteColor,
+                  ),
 
-                /// Profile
-                AdvancedSalomonBottomBarItem(
-                  icon: Icon(Icons.person),
-                  title: Text("Profile"),
-                  selectedColor: Colors.teal,
-                ),
-              ],
+                  /// Profile
+                  AdvancedSalomonBottomBarItem(
+                    icon: SvgPicture.asset(
+                      icons1[2],
+                      height: 22.h,
+                      width: 22.h,
+                      color: AppColors.whiteColor,
+                    ),
+                    title: AppText.profile.styleSemiBold(
+                      color: AppColors.whiteColor,
+                      size: 14.sp,
+                    ),
+                    selectedColor: AppColors.whiteColor,
+                  ),
+                ],
+              ),
             ),
-            // bottomNavigationBar: Padding(
-            //   padding: EdgeInsets.only(bottom: Platform.isIOS ? 15.h : 0),
-            //   child: Container(
-            //     height: 60.h,
-            //     padding: EdgeInsets.symmetric(horizontal: 35.w),
-            //     decoration: BoxDecoration(
-            //       color: Colors.white,
-            //       boxShadow: [
-            //         BoxShadow(
-            //           color: Colors.black12.withValues(alpha: 0.05),
-            //           blurRadius: 6,
-            //           offset: const Offset(0, -5),
-            //         ),
-            //       ],
-            //     ),
-            //     child: Row(
-            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       children: List.generate(icons.length, (index) {
-            //         final isSelected = index == controller.selectedIndex.value;
-            //         return GestureDetector(
-            //           onTap: () => controller.changeTab(index),
-            //           child: SvgPicture.asset(
-            //             isSelected ? icons1[index] : icons[index],
-            //             height: index == 1 ? 34.h : 30.h,
-            //             width: index == 1 ? 34.h : 30.h,
-            //           ),
-            //         );
-            //       }),
-            //     ),
-            //   ),
-            // ),
           ),
         ),
       ),

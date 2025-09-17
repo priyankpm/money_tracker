@@ -7,6 +7,12 @@ class AppText {
   static const String introTextAn = "Spend Smarter\nSave More";
   static const String getStarted = "Get Started";
 
+  /// BOTTOMBAR
+
+  static const String dashboard = "Dashboard";
+  static const String history = "History";
+  static const String profile = "Profile";
+
   ///LOGIN
   static const String loginButtonText = "Continue with Google";
   static const String appleButtonText = "Continue with Apple";
@@ -25,7 +31,6 @@ class AppText {
   static const String seeAll = "See all";
 
   /// PROFILE
-  static const String profile = "Profile";
   static const String updateProfile = "Update Profile";
   static const String fName = "First Name";
   static const String lName = "Last Name";

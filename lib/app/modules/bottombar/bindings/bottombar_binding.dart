@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:money_tracker/app/modules/historypage/bindings/history_binding.dart';
+import 'package:money_tracker/app/modules/historypage/controllers/history_controller.dart';
 import 'package:money_tracker/app/modules/home/controllers/home_controller.dart';
 import 'package:money_tracker/app/modules/profile/controllers/profile_controller.dart';
 
@@ -9,6 +11,7 @@ class BottombarBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<BottombarController>(() => BottombarController());
     Get.lazyPut<HomeController>(() => HomeController());
+    Get.lazyPut<HistoryController>(() => HistoryController());
     Get.lazyPut<ProfileController>(() => ProfileController());
   }
 }

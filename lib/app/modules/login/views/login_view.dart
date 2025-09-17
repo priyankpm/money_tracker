@@ -78,7 +78,7 @@ class LoginView extends GetView<LoginController> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Image.asset(
-                                  AppImages.googleImage,
+                                  AppImages.googleIcon,
                                   height: 30.h,
                                   width: 30.h,
                                 ),
@@ -104,7 +104,7 @@ class LoginView extends GetView<LoginController> {
                                   Padding(
                                     padding: EdgeInsets.only(bottom: 3.h),
                                     child: Image.asset(
-                                      AppImages.iosImage,
+                                      AppImages.iosIcon,
                                       height: 30.h,
                                       width: 30.h,
                                     ),

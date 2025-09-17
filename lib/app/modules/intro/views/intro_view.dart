@@ -66,7 +66,7 @@ class IntroView extends GetView<IntroController> {
                         Padding(
                           padding: EdgeInsets.only(bottom: 3.h),
                           child: Image.asset(
-                            AppImages.iosImage,
+                            AppImages.iosIcon,
                             height: 30.h,
                             width: 30.h,
                           ),
