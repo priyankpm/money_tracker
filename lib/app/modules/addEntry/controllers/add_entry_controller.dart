@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:money_tracker/app/models/category_model.dart';
 import 'package:money_tracker/app/models/transaction_model.dart';
+import 'package:money_tracker/app/models/user_model.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/firestore_utils.dart';
@@ -21,19 +22,18 @@ class AddEntryController extends GetxController {
   RxList<CategoryModel> categoryModel = <CategoryModel>[].obs;
   RxBool isUpdate = false.obs;
   RxBool setDataLoader = true.obs;
-
   Rxn<TransactionModel> selectedModel = Rxn<TransactionModel>();
+  Rx<UserModel?> userModel = Rx<UserModel?>(null);
 
 
   @override
   void onInit() {
     initData();
-
     super.onInit();
   }
 
   initData() async {
-
+    userModel = (await FireStoreUtils.getUserProfile()).obs;
     if (Get.arguments["selectedData"] != null) {
       selectedModel.value = Get.arguments["selectedData"];
       isUpdate.value =true;
