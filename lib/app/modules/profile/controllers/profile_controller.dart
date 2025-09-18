@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:money_tracker/app/models/customer_model.dart';
+import 'package:money_tracker/app/models/user_model.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/firestore_utils.dart';
 import 'package:money_tracker/utils/snackbar.dart';
@@ -30,6 +30,21 @@ class ProfileController extends GetxController {
 
   Future<void> updateProfile() async {
     try {
+      if (fNameController.text.isEmpty) {
+        CommonSnackbar.showSnackbar(
+          message: AppText.pleaseAddFName,
+          type: SnackbarType.error,
+        );
+        return;
+      }
+      if (fNameController.text.isEmpty) {
+        CommonSnackbar.showSnackbar(
+          message: AppText.pleaseAddLName,
+          type: SnackbarType.error,
+        );
+        return;
+      }
+
       isLoading.value = true;
       bool isUpdated = await FireStoreUtils.updateUser({
         'firstname': fNameController.text,
@@ -43,6 +58,9 @@ class ProfileController extends GetxController {
           message: AppText.updateSuccess,
           type: SnackbarType.success,
         );
+
+
+
       } else {
         CommonSnackbar.showSnackbar(
           message: AppText.updateFailed,

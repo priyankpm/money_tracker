@@ -1,15 +1,18 @@
 import 'package:get/get.dart';
+import 'package:money_tracker/app/models/transaction_model.dart';
+import 'package:money_tracker/utils/firestore_utils.dart';
 
 class HistoryController extends GetxController {
   RxString type = "Income".obs;
   List<String> types = ["Income", "Expense"];
-
-  updateType(value) => type.value = value;
   final count = 0.obs;
-
+  var isLoading = false.obs;
   var isExpanded = false.obs;
   var selectedFilter = "All".obs;
+  RxList<TransactionModel> incomeTransaction = <TransactionModel>[].obs;
+  RxList<TransactionModel> expenseTransaction = <TransactionModel>[].obs;
 
+  updateType(value) => type.value = value;
   final filters = [
     "All",
     "Today",
@@ -21,18 +24,21 @@ class HistoryController extends GetxController {
 
   @override
   void onInit() {
+    getIncomes();
+    getExpense();
     super.onInit();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  Future<void> getIncomes() async {
+    isLoading.value = true;
+    incomeTransaction.value = (await FireStoreUtils.getAllIncomes() ?? []);
+    isLoading.value = false;
   }
 
-  @override
-  void onClose() {
-    super.onClose();
+  Future<void> getExpense() async {
+    isLoading.value = true;
+    expenseTransaction.value =
+        (await FireStoreUtils.getTodayTransaction() ?? []);
+    isLoading.value = false;
   }
-
-  void increment() => count.value++;
 }

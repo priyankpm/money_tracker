@@ -4,11 +4,11 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_images.dart';
+import 'package:money_tracker/config/app_loader.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/buttons.dart';
 import 'package:money_tracker/utils/extenstion.dart';
 import 'package:money_tracker/utils/firestore_utils.dart';
-import 'package:money_tracker/utils/snackbar.dart';
 import 'package:money_tracker/utils/textfield.dart';
 
 import '../controllers/profile_controller.dart';
@@ -220,14 +220,12 @@ class ProfileView extends GetView<ProfileController> {
                               controller.isLoading.value
                                   ? null
                                   : () async {
+
                                     await controller.updateProfile();
                                   },
                           child:
                               controller.isLoading.value
-                                  ? SpinKitThreeBounce(
-                                    color: AppColors.whiteColor,
-                                    size: 20.h,
-                                  )
+                                  ? AppLoader.buttonLoader
                                   : Center(
                                     child: AppText.updateProfile.styleMedium(
                                       color: AppColors.whiteColor,

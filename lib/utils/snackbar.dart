@@ -26,28 +26,25 @@ class _TopSnackbarWidget extends StatelessWidget {
   final String message;
   final SnackbarType type;
 
-  const _TopSnackbarWidget({
-    required this.message,
-    required this.type,
-  });
+  const _TopSnackbarWidget({required this.message, required this.type});
 
   @override
   Widget build(BuildContext context) {
     final backgroundColor =
-    type == SnackbarType.success ? Colors.green : Colors.red;
+        type == SnackbarType.success ? Colors.green : Colors.red;
 
     return Positioned(
-      top: MediaQuery.of(context).padding.top + 20,
-      left: 12,
-      right: 12,
+      top: MediaQuery.of(context).padding.top + 20.h,
+      left: 22.w,
+      right: 22.w,
       child: Material(
         elevation: 0,
         borderRadius: BorderRadius.circular(8),
         color: backgroundColor,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 16),
-          child: message.styleSemiBold(
-            size: 13.sp,
+          child: message.styleMedium(
+            size: 16.sp,
             color: AppColors.primaryColor,
           ),
         ),

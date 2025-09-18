@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:money_tracker/app/routes/app_pages.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_images.dart';
+import 'package:money_tracker/config/app_loader.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/buttons.dart';
 import 'package:money_tracker/utils/extenstion.dart';
@@ -80,10 +81,7 @@ class LoginView extends GetView<LoginController> {
                             child: Center(
                               child:
                                   controller.isLoading.value
-                                      ? SpinKitThreeBounce(
-                                        color: AppColors.whiteColor,
-                                        size: 20.h,
-                                      )
+                                      ? AppLoader.buttonLoader
                                       : Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,

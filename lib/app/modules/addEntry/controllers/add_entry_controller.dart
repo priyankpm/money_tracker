@@ -2,16 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:money_tracker/config/app_color.dart';
+import 'package:money_tracker/config/app_text.dart';
+import 'package:money_tracker/utils/firestore_utils.dart';
+import 'package:money_tracker/utils/snackbar.dart';
 
 class AddEntryController extends GetxController {
+  final amountController = TextEditingController();
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
-  final dateController =
+  var dateController =
       TextEditingController(
         text: DateFormat('EEE, dd MMM yyyy').format(DateTime.now()),
       ).obs;
   RxString type = "Income".obs;
   List<String> types = ["Income", "Expense"];
+  var isLoading = false.obs;
 
   updateType(value) => type.value = value;
 
@@ -43,18 +48,59 @@ class AddEntryController extends GetxController {
     }
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
+  Future<void> addTransaction() async {
+    try {
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
-  @override
-  void onClose() {
-    super.onClose();
+      if (amountController.text.isEmpty) {
+        CommonSnackbar.showSnackbar(
+          message: AppText.pleaseAddAmount,
+          type: SnackbarType.error,
+        );
+        return;
+      }
+      if (titleController.text.isEmpty) {
+        CommonSnackbar.showSnackbar(
+          message: AppText.pleaseAddTitle,
+          type: SnackbarType.error,
+        );
+        return;
+      }
+
+      isLoading.value = true;
+      bool isAdded = await FireStoreUtils.addTransaction({
+        'type': type.value,
+        'title': titleController.text,
+        'description': descriptionController.text,
+        'date': DateFormat(
+          'EEE, dd MMM yyyy',
+        ).parse(dateController.value.text),
+        'amount': amountController.value.text,
+        'uid': FireStoreUtils.getCurrentUid(),
+      });
+
+      if (isAdded) {
+        CommonSnackbar.showSnackbar(
+          message: AppText.addTransactionSuccess,
+          type: SnackbarType.success,
+        );
+
+        titleController.clear();
+        descriptionController.clear();
+        amountController.clear();
+        dateController =
+            TextEditingController(
+              text: DateFormat('EEE, dd MMM yyyy').format(DateTime.now()),
+            ).obs;
+
+      } else {
+        CommonSnackbar.showSnackbar(
+          message: AppText.addTransactionFailed,
+          type: SnackbarType.error,
+        );
+      }
+    } finally {
+      isLoading.value = false;
+    }
   }
 }

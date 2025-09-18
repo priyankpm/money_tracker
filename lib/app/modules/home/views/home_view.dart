@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:money_tracker/app/modules/profile/controllers/profile_controller.dart';
+import 'package:money_tracker/app/modules/bottombar/controllers/bottombar_controller.dart';
 import 'package:money_tracker/app/routes/app_pages.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_images.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/extenstion.dart';
 import 'package:money_tracker/utils/shared_prefs.dart';
+
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -22,8 +23,10 @@ class HomeView extends GetView<HomeController> {
         child: Scaffold(
           backgroundColor: AppColors.whiteColor,
           floatingActionButton: GestureDetector(
-            onTap: () {
-              Get.toNamed(Routes.ADD_ENTRY);
+            onTap: () async {
+              await Get.toNamed(Routes.ADD_ENTRY)?.then((value) async {
+                await controller.getTodayTransaction();
+              });
             },
             child: Container(
               height: 60.h,
@@ -70,14 +73,14 @@ class HomeView extends GetView<HomeController> {
                               ),
                               Builder(
                                 builder: (context) {
+                                  String? name = preferences.getString(
+                                    SharedPreference.USER_NAME,
+                                  );
 
-                                  String? name = preferences.getString(SharedPreference.USER_NAME);
-
-                                  return (name ?? "")
-                                      .styleSemiBold(
-                                        size: 20.sp,
-                                        color: AppColors.whiteColor,
-                                      );
+                                  return (name ?? "").styleSemiBold(
+                                    size: 20.sp,
+                                    color: AppColors.whiteColor,
+                                  );
                                 },
                               ),
                             ],
@@ -179,18 +182,9 @@ class HomeView extends GetView<HomeController> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      AppText.totalBalance.styleSemiBold(
-                                        size: 16.sp,
-                                        color: AppColors.whiteColor,
-                                      ),
-                                      Icon(
-                                        Icons.keyboard_arrow_up,
-                                        color: AppColors.whiteColor,
-                                      ),
-                                    ],
+                                  AppText.totalBalance.styleSemiBold(
+                                    size: 16.sp,
+                                    color: AppColors.whiteColor,
                                   ),
                                   5.h.addHSpace(),
                                   AppText.amount.styleBold(
@@ -218,12 +212,17 @@ class HomeView extends GetView<HomeController> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    AppText.todayHistory.styleSemiBold(
+                    AppText.recentHistory.styleSemiBold(
                       color: AppColors.blackColor,
                     ),
-                    AppText.seeAll.styleRegular(
-                      size: 14.sp,
-                      color: AppColors.greyColor,
+                    GestureDetector(
+                      onTap: () {
+                        Get.find<BottombarController>().changeTab(1);
+                      },
+                      child: AppText.seeAll.styleRegular(
+                        size: 14.sp,
+                        color: AppColors.greyColor,
+                      ),
                     ),
                   ],
                 ),
@@ -231,56 +230,92 @@ class HomeView extends GetView<HomeController> {
               Expanded(
                 child: SingleChildScrollView(
                   physics: BouncingScrollPhysics(),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 22.w),
-                    child: ListView.separated(
-                      physics: NeverScrollableScrollPhysics(),
-                      separatorBuilder:
-                          (context, index) => Divider(height: 30.h),
-                      padding: EdgeInsets.only(bottom: 70.h),
-                      itemCount: 10,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return Row(
-                          children: [
-                            Container(
-                              height: 55.h,
-                              width: 55.h,
-                              decoration: BoxDecoration(
-                                color: AppColors.lightColor,
-                                borderRadius: BorderRadius.circular(10.r),
+                  child: Obx(
+                    () => Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 22.w),
+                      child:
+                          controller.isLoading.value
+                              ? Padding(
+                                padding: EdgeInsets.only(top: 150.h),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.primaryColor,
+                                  ),
+                                ),
+                              )
+                              : ListView.separated(
+                                physics: NeverScrollableScrollPhysics(),
+                                separatorBuilder:
+                                    (context, index) => Divider(height: 30.h),
+                                padding: EdgeInsets.only(bottom: 70.h),
+                                itemCount: controller.recentTransaction.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  final data =
+                                      controller.recentTransaction[index];
+                                  return Row(
+                                    children: [
+                                      Container(
+                                        height: 55.h,
+                                        width: 55.h,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.lightColor,
+                                          borderRadius: BorderRadius.circular(
+                                            10.r,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              getDayAndDate(
+                                                data.date,
+                                              )["date"]!.styleBold(
+                                                size: 20.sp,
+                                                color: AppColors.primaryColor,
+                                              ),
+                                              getDayAndDate(
+                                                data.date,
+                                              )["day"]!.styleSemiBold(
+                                                size: 10.sp,
+                                                color: AppColors.primaryColor,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      10.w.addWSpace(),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            data.title.styleSemiBold(
+                                              size: 15.sp,
+                                              color: AppColors.blackColor,
+                                            ),
+                                            data.description.styleRegular(
+                                              size: 13.sp,
+                                              color: AppColors.greyColor,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+
+                                      "${data.type == AppText.incomeText ? "+" : "-"} \$ ${data.amount}"
+                                          .styleSemiBold(
+                                            align: TextAlign.end,
+                                            size: 14.sp,
+                                            color:
+                                                index % 2 == 0
+                                                    ? AppColors.greenColor
+                                                    : AppColors.redColor,
+                                          ),
+                                    ],
+                                  );
+                                },
                               ),
-                              child: Center(
-                                child: "U".styleBold(
-                                  size: 26.sp,
-                                  color: AppColors.primaryColor,
-                                ),
-                              ),
-                            ),
-                            10.w.addWSpace(),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                "Upwork".styleSemiBold(
-                                  color: AppColors.blackColor,
-                                ),
-                                "Today".styleRegular(
-                                  size: 14.sp,
-                                  color: AppColors.greyColor,
-                                ),
-                              ],
-                            ),
-                            Spacer(),
-                            "+ \$ 850.00".styleSemiBold(
-                              size: 14.sp,
-                              color:
-                                  index % 2 == 0
-                                      ? AppColors.greenColor
-                                      : AppColors.redColor,
-                            ),
-                          ],
-                        );
-                      },
                     ),
                   ),
                 ),

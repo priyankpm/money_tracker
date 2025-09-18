@@ -12,7 +12,7 @@ class AppTextField extends StatelessWidget {
   final Widget? suffix;
   final bool? readonly;
   final void Function()? onTap;
-
+  final int? maxLength;
 
   const AppTextField({
     super.key,
@@ -23,19 +23,24 @@ class AppTextField extends StatelessWidget {
     this.maxLines,
     this.minLines,
     this.suffix,
-    this.onTap, this.readonly,
+    this.onTap,
+    this.readonly,
+    this.maxLength,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(readOnly: readonly ?? false,
+    return TextFormField(
+      readOnly: readonly ?? false,
       onTap: onTap,
       minLines: minLines ?? 1,
       maxLines: maxLines,
       controller: controller,
+      maxLength: maxLength,
       keyboardType: textInputType ?? TextInputType.name,
       textInputAction: textInputAction ?? TextInputAction.done,
       decoration: InputDecoration(
+        counterText: '',
         suffixIcon: suffix,
         contentPadding: EdgeInsets.all(15.h),
         hint: Text(labelText),

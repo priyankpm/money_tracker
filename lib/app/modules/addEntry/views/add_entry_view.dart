@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:money_tracker/app/modules/addEntry/controllers/add_entry_controller.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_images.dart';
+import 'package:money_tracker/config/app_loader.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/buttons.dart';
 import 'package:money_tracker/utils/extenstion.dart';
@@ -58,7 +59,7 @@ class AddEntryView extends GetView<AddEntryController> {
               Positioned(
                 right: 20.w,
                 left: 20.w,
-                top: 150.h,
+                top: 140.h,
                 child: Container(
                   decoration: BoxDecoration(
                     color: AppColors.whiteColor,
@@ -126,24 +127,36 @@ class AddEntryView extends GetView<AddEntryController> {
                           ),
                         ),
 
-                        15.h.addHSpace(),
+                        10.h.addHSpace(),
+
+                        AppText.amountText.styleMedium(size: 14.sp),
+                        5.h.addHSpace(),
+                        AppTextField(maxLength: 7,
+                          textInputType: TextInputType.number,
+                          controller: controller.amountController,
+                          labelText: AppText.amountText,
+                          textInputAction: TextInputAction.next,
+                        ),
+                        10.h.addHSpace(),
 
                         AppText.title.styleMedium(size: 14.sp),
                         5.h.addHSpace(),
                         AppTextField(
                           controller: controller.titleController,
                           labelText: AppText.title,
+                          textInputAction: TextInputAction.next,
                         ),
-                        15.h.addHSpace(),
+                        10.h.addHSpace(),
                         AppText.description.styleMedium(size: 14.sp),
                         5.h.addHSpace(),
                         AppTextField(
-                          maxLines: 15,
-                          minLines: 4,
+                          maxLines: 3,
+                          minLines: 3,
                           controller: controller.descriptionController,
-                          labelText: AppText.description,
+                          labelText: AppText.descriptionOp,
+                          textInputAction: TextInputAction.done,
                         ),
-                        15.h.addHSpace(),
+                        10.h.addHSpace(),
                         AppText.date.styleMedium(size: 14.sp),
                         5.h.addHSpace(),
                         AppTextField(
@@ -158,13 +171,25 @@ class AddEntryView extends GetView<AddEntryController> {
                           controller: controller.dateController.value,
                           labelText: AppText.date,
                         ),
-                        30.h.addHSpace(),
-                        AppButton(
-                          child: Center(
-                            child: AppText.save.styleMedium(
-                              color: AppColors.whiteColor,
-                              size: 18.sp,
-                            ),
+                        20.h.addHSpace(),
+                        Obx(
+                          () => AppButton(
+                            onTap:
+                                controller.isLoading.value
+                                    ? null
+                                    : () async {
+                                      hideKeyboard(context);
+                                      await controller.addTransaction();
+                                    },
+                            child:
+                                controller.isLoading.value
+                                    ? AppLoader.buttonLoader
+                                    : Center(
+                                      child: AppText.save.styleMedium(
+                                        color: AppColors.whiteColor,
+                                        size: 18.sp,
+                                      ),
+                                    ),
                           ),
                         ),
                         5.h.addHSpace(),

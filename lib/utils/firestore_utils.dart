@@ -4,7 +4,8 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:money_tracker/app/models/customer_model.dart';
+import 'package:money_tracker/app/models/transaction_model.dart';
+import 'package:money_tracker/app/models/user_model.dart';
 import 'package:money_tracker/config/app_collection.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/shared_prefs.dart';
@@ -67,7 +68,7 @@ class FireStoreUtils {
       await fireStore
           .collection(CollectionName.kUserCollection)
           .doc(uid)
-          .set(userData, SetOptions(merge: true));
+          .update(userData);
       return true;
     } catch (e) {
       log("Error updating user profile: $e");
@@ -118,7 +119,7 @@ class FireStoreUtils {
       await fireStore
           .collection(CollectionName.kUserCollection)
           .doc(uid)
-          .set(payload, SetOptions(merge: true));
+          .set(payload);
 
       return true;
     } catch (e) {
@@ -146,6 +147,97 @@ class FireStoreUtils {
         message: AppText.logoutFailed,
         type: SnackbarType.error,
       );
+    }
+  }
+
+  /// ADD TRANSACTION
+  static Future<bool> addTransaction(Map<String, dynamic> transaction) async {
+    try {
+      final uid = getCurrentUid();
+      final doc = await fireStore
+          .collection(CollectionName.kUserCollection)
+          .doc(uid)
+          .collection(CollectionName.kTransactions)
+          .add({'createdAt': DateTime.now()});
+      transaction.addEntries([MapEntry('id', doc.id)]);
+      await fireStore
+          .collection(CollectionName.kUserCollection)
+          .doc(uid)
+          .collection(CollectionName.kTransactions)
+          .doc(doc.id)
+          .set(transaction);
+      return true;
+    } catch (e) {
+      log("Error adding transaction : $e");
+      return false;
+    }
+  }
+
+  /// GET TODAY'S TRANSACTION
+
+  static Future<List<TransactionModel>?> getTodayTransaction() async {
+    try {
+      final uid = getCurrentUid();
+      final querySnapshot =
+          await fireStore
+              .collection(CollectionName.kUserCollection)
+              .doc(uid)
+              .collection(CollectionName.kTransactions)
+              .orderBy('date', descending: true)
+              .limit(10)
+              .get();
+
+      if (querySnapshot.docs.isEmpty) return null;
+      return querySnapshot.docs
+          .map((doc) => TransactionModel.fromJson(doc.data()))
+          .toList();
+    } catch (e) {
+      log("Error fetching user profile: $e");
+      return null;
+    }
+  }
+
+  /// GET TODAY'S TRANSACTION
+
+  static Future<List<TransactionModel>?> getAllIncomes() async {
+    try {
+      final uid = getCurrentUid();
+      final querySnapshot =
+          await fireStore
+              .collection(CollectionName.kUserCollection)
+              .doc(uid)
+              .collection(CollectionName.kTransactions)
+              .where('type', isEqualTo: "Income")
+              .get();
+
+      if (querySnapshot.docs.isEmpty) return null;
+      return querySnapshot.docs
+          .map((doc) => TransactionModel.fromJson(doc.data()))
+          .toList();
+    } catch (e) {
+      log("Error fetching all incomes: $e");
+      return null;
+    }
+  }
+
+  static Future<List<TransactionModel>?> getAllExpense() async {
+    try {
+      final uid = getCurrentUid();
+      final querySnapshot =
+          await fireStore
+              .collection(CollectionName.kUserCollection)
+              .doc(uid)
+              .collection(CollectionName.kTransactions)
+              .where('type', isEqualTo: "Expense")
+              .get();
+
+      if (querySnapshot.docs.isEmpty) return null;
+      return querySnapshot.docs
+          .map((doc) => TransactionModel.fromJson(doc.data()))
+          .toList();
+    } catch (e) {
+      log("Error fetching all expense: $e");
+      return null;
     }
   }
 }

@@ -27,7 +27,7 @@ class AppText {
   static const String amount2 = "\$ 284.00";
   static const String income = "Incomes";
   static const String expense = "Expenses";
-  static const String todayHistory = "Today History";
+  static const String recentHistory = "Recent Transaction";
   static const String seeAll = "See all";
 
   /// PROFILE
@@ -49,20 +49,29 @@ class AppText {
   static const String addTransaction = "Add Transaction";
   static const String title = "Title";
   static const String description = "Description";
+  static const String descriptionOp = "Description (Optional)";
   static const String incomeText = "Income";
   static const String expenseText = "Expense";
   static const String date = "Date";
   static const String save = "Save";
+  static const String amountText = "Amount";
 
   /// HISTORY
   static const String transactionsHistory = "Transactions History";
 
   /// MSGs
 
-  static const String loginSuccess = "Login Successfully";
-  static const String loginFailed = "Login Failed, please try again!";
+  static const String loginSuccess = "Login successfully";
+  static const String loginFailed = "Login failed, please try again!";
   static const String logoutSuccess = "Logged out successfully.";
   static const String logoutFailed = "Logout failed, please try again!";
-  static const String updateSuccess = "Profile Updated successfully.";
+  static const String updateSuccess = "Profile updated successfully.";
   static const String updateFailed = "Update profile failed, please try again!";
+  static const String addTransactionSuccess = "Transaction added successfully.";
+  static const String addTransactionFailed = "Transaction adding failed, please try again!";
+  static const String pleaseAddFName = "Please enter first name.";
+  static const String pleaseAddLName = "Please enter last name.";
+  static const String pleaseAddAmount = "Please enter amount.";
+  static const String pleaseAddTitle = "Please enter title.";
+
 }

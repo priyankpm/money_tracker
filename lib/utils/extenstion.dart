@@ -157,3 +157,9 @@ String getTimeBasedGreeting() {
     return 'Good Night,';
   }
 }
+
+
+Map<String, String> getDayAndDate(DateTime date) => {
+  'day': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][date.weekday - 1],
+  'date': date.day.toString().padLeft(2, '0'),
+};
