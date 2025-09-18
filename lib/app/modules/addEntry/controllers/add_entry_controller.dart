@@ -50,8 +50,6 @@ class AddEntryController extends GetxController {
 
   Future<void> addTransaction() async {
     try {
-
-
       if (amountController.text.isEmpty) {
         CommonSnackbar.showSnackbar(
           message: AppText.pleaseAddAmount,
@@ -61,20 +59,33 @@ class AddEntryController extends GetxController {
       }
       if (titleController.text.isEmpty) {
         CommonSnackbar.showSnackbar(
-          message: AppText.pleaseAddTitle,
+          message: AppText.pleaseAddCategory,
           type: SnackbarType.error,
         );
         return;
       }
 
       isLoading.value = true;
+
+      DateTime selectedDate = DateFormat(
+        'EEE, dd MMM yyyy',
+      ).parse(dateController.value.text);
+      final now = DateTime.now();
+
+      final dateTimeWithCurrentTime = DateTime(
+        selectedDate.year,
+        selectedDate.month,
+        selectedDate.day,
+        now.hour,
+        now.minute,
+        now.second,
+      );
+
       bool isAdded = await FireStoreUtils.addTransaction({
         'type': type.value,
-        'title': titleController.text,
-        'description': descriptionController.text,
-        'date': DateFormat(
-          'EEE, dd MMM yyyy',
-        ).parse(dateController.value.text),
+        'category': titleController.text,
+        'note': descriptionController.text,
+        'date': dateTimeWithCurrentTime,
         'amount': amountController.value.text,
         'uid': FireStoreUtils.getCurrentUid(),
       });
@@ -92,7 +103,6 @@ class AddEntryController extends GetxController {
             TextEditingController(
               text: DateFormat('EEE, dd MMM yyyy').format(DateTime.now()),
             ).obs;
-
       } else {
         CommonSnackbar.showSnackbar(
           message: AppText.addTransactionFailed,

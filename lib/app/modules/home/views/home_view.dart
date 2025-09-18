@@ -8,6 +8,7 @@ import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_images.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/extenstion.dart';
+import 'package:money_tracker/utils/no_data_widgets.dart';
 import 'package:money_tracker/utils/shared_prefs.dart';
 
 import '../controllers/home_controller.dart';
@@ -215,15 +216,17 @@ class HomeView extends GetView<HomeController> {
                     AppText.recentHistory.styleSemiBold(
                       color: AppColors.blackColor,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        Get.find<BottombarController>().changeTab(1);
-                      },
-                      child: AppText.seeAll.styleRegular(
-                        size: 14.sp,
-                        color: AppColors.greyColor,
-                      ),
-                    ),
+                    controller.recentTransaction.length == 10
+                        ? GestureDetector(
+                          onTap: () {
+                            Get.find<BottombarController>().changeTab(1);
+                          },
+                          child: AppText.seeAll.styleRegular(
+                            size: 14.sp,
+                            color: AppColors.greyColor,
+                          ),
+                        )
+                        : SizedBox(),
                   ],
                 ),
               ),
@@ -236,11 +239,18 @@ class HomeView extends GetView<HomeController> {
                       child:
                           controller.isLoading.value
                               ? Padding(
-                                padding: EdgeInsets.only(top: 150.h),
+                                padding: EdgeInsets.only(top: 160.h),
                                 child: Center(
                                   child: CircularProgressIndicator(
                                     color: AppColors.primaryColor,
                                   ),
+                                ),
+                              )
+                              : controller.recentTransaction.isEmpty
+                              ? Padding(
+                                padding: EdgeInsets.only(top: 100.h),
+                                child: NoDataWidget(
+                                  msg: AppText.noRecentTransaction,
                                 ),
                               )
                               : ListView.separated(
@@ -291,11 +301,11 @@ class HomeView extends GetView<HomeController> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            data.title.styleSemiBold(
+                                            data.category.styleSemiBold(
                                               size: 15.sp,
                                               color: AppColors.blackColor,
                                             ),
-                                            data.description.styleRegular(
+                                            data.note.styleRegular(
                                               size: 13.sp,
                                               color: AppColors.greyColor,
                                             ),
@@ -308,7 +318,7 @@ class HomeView extends GetView<HomeController> {
                                             align: TextAlign.end,
                                             size: 14.sp,
                                             color:
-                                                index % 2 == 0
+                                                data.type == AppText.incomeText
                                                     ? AppColors.greenColor
                                                     : AppColors.redColor,
                                           ),

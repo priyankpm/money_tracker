@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:money_tracker/app/models/transaction_model.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/extenstion.dart';
+import 'package:money_tracker/utils/no_data_widgets.dart';
 import '../controllers/history_controller.dart';
 
 class HistoryView extends GetView<HistoryController> {
@@ -144,70 +146,131 @@ class HistoryView extends GetView<HistoryController> {
                 );
               }),
               Padding(padding: EdgeInsets.only(bottom: 5.h)),
-              Expanded(
-                child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 22.w,
-                      vertical: 10.h,
+              GetBuilder<HistoryController>(
+                initState: (state) {
+                  controller.getIncomes();
+                  controller.getExpense();
+                },
+                builder: (controller) {
+                  return Expanded(
+                    child: SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 22.w,
+                          vertical: 10.h,
+                        ),
+                        child: Obx(() {
+                          return controller.isLoading.value
+                              ? Padding(
+                                padding: EdgeInsets.only(
+                                  top: MediaQuery.of(context).size.height * 0.26,
+                                ),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.primaryColor,
+                                  ),
+                                ),
+                              )
+                              : buildListView(
+                                controller,
+                                controller.type.value == "Income"
+                                    ? controller.incomeTransaction
+                                    : controller.expenseTransaction,
+                                context,
+                              );
+                        }),
+                      ),
                     ),
-                    child: ListView.separated(
-                      physics: NeverScrollableScrollPhysics(),
-                      separatorBuilder:
-                          (context, index) => Divider(height: 30.h),
-                      padding: EdgeInsets.only(bottom: 20.h),
-                      itemCount: 10,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return Row(
-                          children: [
-                            Container(
-                              height: 55.h,
-                              width: 55.h,
-                              decoration: BoxDecoration(
-                                color: AppColors.lightColor,
-                                borderRadius: BorderRadius.circular(10.r),
-                              ),
-                              child: Center(
-                                child: "U".styleBold(
-                                  size: 26.sp,
-                                  color: AppColors.primaryColor,
-                                ),
-                              ),
-                            ),
-                            10.w.addWSpace(),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                "Upwork".styleSemiBold(
-                                  color: AppColors.blackColor,
-                                ),
-                                "Today".styleRegular(
-                                  size: 14.sp,
-                                  color: AppColors.greyColor,
-                                ),
-                              ],
-                            ),
-                            Spacer(),
-                            "+ \$ 850.00".styleSemiBold(
-                              size: 14.sp,
-                              color:
-                                  index % 2 == 0
-                                      ? AppColors.greenColor
-                                      : AppColors.redColor,
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                ),
+                  );
+                },
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Widget buildListView(
+    HistoryController controller,
+    List<TransactionModel> data1,
+    BuildContext context,
+  ) {
+    return data1.isEmpty
+        ? Padding(
+          padding: EdgeInsets.only(
+            top: MediaQuery.of(context).size.height * 0.2,
+          ),
+          child: NoDataWidget(
+            msg:
+                controller.type.value == "Income"
+                    ? AppText.noIncomeTransaction
+                    : AppText.noExpenseTransaction,
+          ),
+        )
+        : ListView.separated(
+          physics: NeverScrollableScrollPhysics(),
+          separatorBuilder: (context, index) => Divider(height: 30.h),
+          padding: EdgeInsets.only(bottom: 20.h),
+          itemCount: data1.length,
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            final data = data1[index];
+            return Row(
+              children: [
+                Container(
+                  height: 55.h,
+                  width: 55.h,
+                  decoration: BoxDecoration(
+                    color: AppColors.lightColor,
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        getDayAndDate(data.date)["date"]!.styleBold(
+                          size: 20.sp,
+                          color: AppColors.primaryColor,
+                        ),
+                        getDayAndDate(data.date)["day"]!.styleSemiBold(
+                          size: 10.sp,
+                          color: AppColors.primaryColor,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                10.w.addWSpace(),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      data.category.styleSemiBold(
+                        size: 15.sp,
+                        color: AppColors.blackColor,
+                      ),
+                      data.note.styleRegular(
+                        size: 13.sp,
+                        color: AppColors.greyColor,
+                      ),
+                    ],
+                  ),
+                ),
+                Spacer(),
+                "${data.type == AppText.incomeText ? "+" : "-"} \$ ${data.amount}"
+                    .styleSemiBold(
+                      align: TextAlign.end,
+                      size: 14.sp,
+                      color:
+                          data.type == AppText.incomeText
+                              ? AppColors.greenColor
+                              : AppColors.redColor,
+                    ),
+              ],
+            );
+          },
+        );
   }
 }

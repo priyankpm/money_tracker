@@ -4,18 +4,18 @@ class TransactionModel {
   final String id;
   final String uid;
   final String amount;
-  final String description;
+  final String note;
   final String type;
-  final String title;
+  final String category;
   final DateTime date;
 
   TransactionModel({
     required this.id,
     required this.uid,
     required this.amount,
-    required this.description,
+    required this.note,
     required this.type,
-    required this.title,
+    required this.category,
     required this.date,
   });
 
@@ -24,9 +24,9 @@ class TransactionModel {
       id: json['id'] ?? '',
       uid: json['uid'] ?? '',
       amount: json['amount'] ?? '',
-      description: json['description'] ?? '',
+      note: json['note'] ?? '',
       type: json['type'] ?? '',
-      title: json['title'] ?? '',
+      category: json['category'] ?? '',
       date: (json['date'] as Timestamp).toDate(),
     );
   }
@@ -36,9 +36,9 @@ class TransactionModel {
       'id': id,
       'uid': uid,
       'amount': amount,
-      'description': description,
+      'note': note,
       'type': type,
-      'title': title,
+      'category': category,
       'date': Timestamp.fromDate(date),
     };
   }

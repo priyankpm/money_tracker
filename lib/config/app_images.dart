@@ -22,4 +22,5 @@ class AppImages {
   static const history1 = "${iconPath}history_1.svg";
   static const chart1 = "${iconPath}chart_1.svg";
   static const profile1 = "${iconPath}user_1.svg";
+  static const noData = "${iconPath}no_daa.svg";
 }

@@ -24,7 +24,7 @@ class LoginView extends GetView<LoginController> {
       child: SafeArea(
         top: false,
         child: Scaffold(
-          backgroundColor: AppColors.whiteColor,
+          backgroundColor: AppColors.lightPrimaryColor,
           body: SizedBox(
             height: MediaQuery.of(context).size.height,
             child: Stack(
