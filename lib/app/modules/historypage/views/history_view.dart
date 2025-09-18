@@ -31,6 +31,7 @@ class HistoryView extends GetView<HistoryController> {
                 ),
               ),
 
+              /// TAB BAR(EXPENSE - INCOME)
               Obx(
                 () => Container(
                   height: 45.h,
@@ -51,25 +52,14 @@ class HistoryView extends GetView<HistoryController> {
                               right: index == 0 ? 15.w : 0,
                             ),
                             decoration: BoxDecoration(
-                              color:
-                                  controller.types[index] ==
-                                          controller.type.value
-                                      ? AppColors.primaryColor
-                                      : Colors.transparent,
+                              color: controller.types[index] == controller.type.value ? AppColors.primaryColor : Colors.transparent,
                               border: Border.all(color: AppColors.primaryColor),
                               borderRadius: BorderRadius.circular(10.r),
                             ),
                             child: Center(
-                              child: (index == 0
-                                      ? AppText.incomeText
-                                      : AppText.expenseText)
-                                  .styleSemiBold(
-                                    color:
-                                        controller.types[index] ==
-                                                controller.type.value
-                                            ? AppColors.whiteColor
-                                            : AppColors.blackColor,
-                                  ),
+                              child: (index == 0 ? AppText.incomeText : AppText.expenseText).styleSemiBold(
+                                color: controller.types[index] == controller.type.value ? AppColors.whiteColor : AppColors.blackColor,
+                              ),
                             ),
                           ),
                         ),
@@ -78,80 +68,13 @@ class HistoryView extends GetView<HistoryController> {
                   ),
                 ),
               ),
-              Padding(padding: EdgeInsets.only(bottom: 5.h)),
-              Obx(() {
-                return Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.lightColor,
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
-                  margin: EdgeInsets.symmetric(horizontal: 22.w),
-                  child: Column(
-                    children: [
-                      ListTile(
-                        splashColor: Colors.transparent,
-                        title: Row(
-                          children: [
-                            Icon(
-                              Icons.filter_list,
-                              color: AppColors.primaryColor,
-                            ),
-                            10.w.addWSpace(),
-                            "Filter: ${controller.selectedFilter.value}"
-                                .styleSemiBold(),
-                          ],
-                        ),
-                        trailing: Icon(
-                          controller.isExpanded.value
-                              ? Icons.keyboard_arrow_up
-                              : Icons.keyboard_arrow_down,
-                        ),
-                        onTap: () {
-                          controller.isExpanded.value =
-                              !controller.isExpanded.value;
-                        },
-                      ),
 
-                      AnimatedSize(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                        child:
-                            controller.isExpanded.value
-                                ? Padding(
-                                  padding: EdgeInsets.only(bottom: 10.h),
-                                  child: RadioGroup<String>(
-                                    groupValue: controller.selectedFilter.value,
-                                    onChanged: (String? v) {
-                                      if (v == null) return;
-                                      controller.selectedFilter.value = v;
-                                      controller.isExpanded.value = false;
-                                    },
-                                    child: Column(
-                                      children:
-                                          controller.filters.map((filter) {
-                                            return RadioListTile<String>(
-                                              value: filter,
-                                              title: filter.styleMedium(
-                                                color: AppColors.primaryColor,
-                                              ),
-                                            );
-                                          }).toList(),
-                                    ),
-                                  ),
-                                )
-                                : const SizedBox.shrink(),
-                      ),
-                    ],
-                  ),
-                );
-              }),
-              Padding(padding: EdgeInsets.only(bottom: 5.h)),
               GetBuilder<HistoryController>(
                 initState: (state) {
                   controller.getIncomes();
                   controller.getExpense();
                 },
-                builder: (controller) {
+                builder: (controller1) {
                   return Expanded(
                     child: SingleChildScrollView(
                       physics: BouncingScrollPhysics(),
@@ -161,24 +84,22 @@ class HistoryView extends GetView<HistoryController> {
                           vertical: 10.h,
                         ),
                         child: Obx(() {
-                          return controller.isLoading.value
-                              ? Padding(
-                                padding: EdgeInsets.only(
-                                  top: MediaQuery.of(context).size.height * 0.26,
-                                ),
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    color: AppColors.primaryColor,
-                                  ),
-                                ),
-                              )
-                              : buildListView(
-                                controller,
-                                controller.type.value == "Income"
-                                    ? controller.incomeTransaction
-                                    : controller.expenseTransaction,
-                                context,
-                              );
+                          return controller.isLoading.value ? Padding(
+                            padding: EdgeInsets.only(
+                              top: MediaQuery.of(context).size.height * 0.26,
+                            ),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.primaryColor,
+                              ),
+                            ),
+                          ) : buildListView(
+                            controller,
+                            controller.type.value == "Income"
+                                ? controller.incomeTransaction
+                                : controller.expenseTransaction,
+                            context,
+                          );
                         }),
                       ),
                     ),
@@ -197,26 +118,88 @@ class HistoryView extends GetView<HistoryController> {
     List<TransactionModel> data1,
     BuildContext context,
   ) {
-    return data1.isEmpty
-        ? Padding(
-          padding: EdgeInsets.only(
-            top: MediaQuery.of(context).size.height * 0.2,
-          ),
+    return data1.isEmpty ? Padding(
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).size.height * 0.2,
+      ),
+      child: NoDataWidget(
+        msg: controller.type.value == "Income"
+            ? AppText.noIncomeTransaction
+            : AppText.noExpenseTransaction,
+      ),
+    ) : Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        data1.isEmpty ? SizedBox() : Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.r),
+                border: Border.all(color: Colors.grey.withOpacity(0.4), width: 1),
+              ),
+              padding: const EdgeInsets.only(left: 15, right: 10, top: 5, bottom: 5),
+              child: Obx(() => PopupMenuButton<String>(
+                padding: EdgeInsets.zero,
+                menuPadding: EdgeInsets.zero,
+                color: AppColors.whiteColor,
+                borderRadius: BorderRadius.circular(10),
+                // Using Row inside `child` instead of `icon` for text + icon
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    controller.selectedFilter.value.styleSemiBold(),
+                    const Icon(Icons.keyboard_arrow_down),
+                  ],
+                ),
+                onSelected: (String value) {
+                  controller.selectedFilter.value = value;
+                },
+                itemBuilder: (context) {
+                  return [
+                    for (int i = 0; i < controller.filters.length; i++) ...[
+                      PopupMenuItem<String>(
+                        value: controller.filters[i],
+                        // Highlight if selected
+                        child: controller.filters[i] == controller.selectedFilter.value ? Row(children: [
+                          controller.filters[i].styleMedium(
+                            color: AppColors.primaryColor,
+                            // optional: bold for emphasis
+                          ),
+                          Spacer(),
+                          Icon(Icons.check)
+                        ],) : controller.filters[i].styleMedium(
+                          color: Colors.black,
+                        ),
+                      ),
+                      // Add divider except after last item
+                      if (i != controller.filters.length - 1)
+                        const PopupMenuDivider(height: 1,),
+                    ]
+                  ];
+                },
+              )),
+            )
+          ],
+        ),
+
+        controller.filteredTransactions.isEmpty ? Center(
+          heightFactor: 3.2,
           child: NoDataWidget(
-            msg:
-                controller.type.value == "Income"
-                    ? AppText.noIncomeTransaction
-                    : AppText.noExpenseTransaction,
+            msg: controller.type.value == "Income"
+                ? AppText.noIncomeTransaction
+                : AppText.noExpenseTransaction,
           ),
-        )
-        : ListView.separated(
+        ) :
+        ListView.separated(
           physics: NeverScrollableScrollPhysics(),
           separatorBuilder: (context, index) => Divider(height: 30.h),
           padding: EdgeInsets.only(bottom: 20.h),
-          itemCount: data1.length,
+          itemCount: controller.filteredTransactions.length,
           shrinkWrap: true,
           itemBuilder: (context, index) {
-            final data = data1[index];
+            // final data = data1[index];
+            final data = controller.filteredTransactions[index];
             return Row(
               children: [
                 Container(
@@ -251,7 +234,7 @@ class HistoryView extends GetView<HistoryController> {
                         size: 15.sp,
                         color: AppColors.blackColor,
                       ),
-                      data.note.styleRegular(
+                      data.note.isEmpty ? SizedBox() : data.note.styleRegular(
                         size: 13.sp,
                         color: AppColors.greyColor,
                       ),
@@ -259,18 +242,16 @@ class HistoryView extends GetView<HistoryController> {
                   ),
                 ),
                 Spacer(),
-                "${data.type == AppText.incomeText ? "+" : "-"} \$ ${data.amount}"
-                    .styleSemiBold(
-                      align: TextAlign.end,
-                      size: 14.sp,
-                      color:
-                          data.type == AppText.incomeText
-                              ? AppColors.greenColor
-                              : AppColors.redColor,
-                    ),
+                "${data.type == AppText.incomeText ? "+" : "-"} \$ ${data.amount}".styleSemiBold(
+                  align: TextAlign.end,
+                  size: 14.sp,
+                  color: data.type == AppText.incomeText ? AppColors.greenColor : AppColors.redColor,
+                ),
               ],
             );
           },
-        );
+        ),
+      ],
+    );
   }
 }

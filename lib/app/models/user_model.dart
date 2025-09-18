@@ -8,6 +8,8 @@ class UserModel {
   final String? phoneNumber;
   final String email;
   final String lastname;
+  final double totalExpense;
+  final double totalIncome;
 
   UserModel({
     required this.uid,
@@ -17,6 +19,8 @@ class UserModel {
     this.phoneNumber,
     required this.email,
     required this.lastname,
+    required this.totalExpense,
+    required this.totalIncome,
   });
 
   // Factory method to create a UserModel from JSON
@@ -29,6 +33,8 @@ class UserModel {
       phoneNumber: json['phoneNumber'],
       email: json['email'],
       lastname: json['lastname'],
+      totalExpense: json['totalExpense'] ?? 0,
+      totalIncome: json['totalIncome'] ?? 0,
     );
   }
 
@@ -41,6 +47,8 @@ class UserModel {
       'phoneNumber': phoneNumber,
       'email': email,
       'lastname': lastname,
+      'totalExpense': totalExpense,
+      'totalIncome': totalIncome,
     };
   }
 }

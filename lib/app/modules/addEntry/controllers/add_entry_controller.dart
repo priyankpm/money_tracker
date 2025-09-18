@@ -12,10 +12,7 @@ class AddEntryController extends GetxController {
   final amountController = TextEditingController();
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
-  var dateController =
-      TextEditingController(
-        text: DateFormat('EEE, dd MMM yyyy').format(DateTime.now()),
-      ).obs;
+  var dateController = TextEditingController(text: DateFormat('EEE, dd MMM yyyy').format(DateTime.now()),).obs;
   RxString type = "Income".obs;
   List<String> types = ["Income", "Expense"];
   var isLoading = false.obs;
@@ -131,19 +128,31 @@ class AddEntryController extends GetxController {
         'uid': FireStoreUtils.getCurrentUid(),
       });
 
+      if(type.value.toLowerCase() == 'income'){
+        final totalBalance = (userModel.value?.totalIncome ?? 0.0) + double.parse(amountController.value.text);
+        print('===totalBalance====${totalBalance}');
+        await FireStoreUtils.updateUser({
+          'totalIncome': totalBalance,
+        });
+      }else{
+        final totalBalance = (userModel.value?.totalExpense ?? 0.0) + double.parse(amountController.value.text);
+        await FireStoreUtils.updateUser({
+          'totalExpense': totalBalance,
+        });
+      }
+
       if (isAdded) {
         CommonSnackbar.showSnackbar(
           message: AppText.addTransactionSuccess,
           type: SnackbarType.success,
         );
 
-        titleController.clear();
-        descriptionController.clear();
-        amountController.clear();
-        dateController =
-            TextEditingController(
-              text: DateFormat('EEE, dd MMM yyyy').format(DateTime.now()),
-            ).obs;
+        Get.back();
+
+        // titleController.clear();
+        // descriptionController.clear();
+        // amountController.clear();
+        // dateController = TextEditingController(text: DateFormat('EEE, dd MMM yyyy').format(DateTime.now()),).obs;
       } else {
         CommonSnackbar.showSnackbar(
           message: AppText.addTransactionFailed,
