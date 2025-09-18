@@ -10,8 +10,8 @@ class BottombarBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<BottombarController>(() => BottombarController());
+    Get.put<ProfileController>(ProfileController());
     Get.lazyPut<HomeController>(() => HomeController());
     Get.lazyPut<HistoryController>(() => HistoryController());
-    Get.lazyPut<ProfileController>(() => ProfileController());
   }
 }

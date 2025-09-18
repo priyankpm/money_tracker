@@ -44,34 +44,56 @@ extension FontStyle on String {
     );
   }
 
-  Text styleRegular({Color? color, double? size, TextAlign? align}) =>
-      fontStyle(
-        color: color,
-        size: size,
-        weight: FontWeight.w400,
-        align: align,
-      );
+  Text styleRegular({
+    Color? color,
+    double? size,
+    TextAlign? align,
+    TextOverflow? overflow,
+  }) => fontStyle(
+    color: color,
+    size: size,
+    weight: FontWeight.w400,
+    align: align,
+    overflow: overflow,
+  );
 
-  Text styleMedium({Color? color, double? size, TextAlign? align}) => fontStyle(
+  Text styleMedium({
+    Color? color,
+    double? size,
+    TextAlign? align,
+    TextOverflow? overflow,
+  }) => fontStyle(
     color: color,
     size: size,
     weight: FontWeight.w500,
     align: align,
+    overflow: overflow,
   );
 
-  Text styleSemiBold({Color? color, double? size, TextAlign? align}) =>
-      fontStyle(
-        color: color,
-        size: size,
-        weight: FontWeight.w600,
-        align: align,
-      );
+  Text styleSemiBold({
+    Color? color,
+    double? size,
+    TextAlign? align,
+    TextOverflow? overflow,
+  }) => fontStyle(
+    color: color,
+    size: size,
+    weight: FontWeight.w600,
+    align: align,
+    overflow: overflow,
+  );
 
-  Text styleBold({Color? color, double? size, TextAlign? align}) => fontStyle(
+  Text styleBold({
+    Color? color,
+    double? size,
+    TextAlign? align,
+    TextOverflow? overflow,
+  }) => fontStyle(
     color: color,
     size: size,
     weight: FontWeight.w700,
     align: align,
+    overflow: overflow,
   );
 }
 
@@ -118,5 +140,20 @@ String mapFirebaseErrorToMessage(String code) {
       return 'No account found with these details.';
     default:
       return 'Something went wrong. Please try again.';
+  }
+}
+
+
+String getTimeBasedGreeting() {
+  final now = DateTime.now();
+  final hour = now.hour;
+  if (hour >= 5 && hour < 12) {
+    return 'Good Morning,';
+  } else if (hour >= 12 && hour < 17) {
+    return 'Good Afternoon,';
+  } else if (hour >= 17 && hour < 21) {
+    return 'Good Evening,';
+  } else {
+    return 'Good Night,';
   }
 }

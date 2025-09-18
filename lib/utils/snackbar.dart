@@ -1,34 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/utils/extenstion.dart';
 
-class CommonSnackbar {
-  void showSnackbar({required String message, required SnackbarType type, required BuildContext context}) {
-    TopSnackbar.show(
-      context,
-      message: message,
-      type: type,
-    );
-  }
-}
-
 enum SnackbarType { success, error }
 
-class TopSnackbar {
-  static void show(
-      BuildContext context, {
-        required String message,
-        required SnackbarType type,
-        Duration duration = const Duration(seconds: 2),
-      }) {
-    final overlay = Overlay.of(context);
+class CommonSnackbar {
+  static void showSnackbar({
+    required String message,
+    required SnackbarType type,
+    Duration duration = const Duration(seconds: 2),
+  }) {
+    final overlay = Overlay.of(Get.overlayContext!);
     final overlayEntry = OverlayEntry(
       builder: (_) => _TopSnackbarWidget(message: message, type: type),
     );
 
     overlay.insert(overlayEntry);
-
     Future.delayed(duration, () => overlayEntry.remove());
   }
 }
@@ -44,7 +33,9 @@ class _TopSnackbarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = type == SnackbarType.success ? Colors.green : Colors.red;
+    final backgroundColor =
+    type == SnackbarType.success ? Colors.green : Colors.red;
+
     return Positioned(
       top: MediaQuery.of(context).padding.top + 20,
       left: 12,

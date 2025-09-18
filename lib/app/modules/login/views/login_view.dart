@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import 'package:get/get.dart';
 import 'package:money_tracker/app/routes/app_pages.dart';
@@ -67,26 +68,37 @@ class LoginView extends GetView<LoginController> {
                           align: TextAlign.center,
                         ),
                         Spacer(),
-
-                        AppButton(
-                          onTap: () {
-                            controller.loginWithGoogle(context: context);
-                          },
-                          borderColor: AppColors.whiteColor,
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  AppImages.googleIcon,
-                                  height: 30.h,
-                                  width: 30.h,
-                                ),
-                                10.w.addWSpace(),
-                                AppText.loginButtonText.styleMedium(
-                                  color: AppColors.whiteColor,
-                                ),
-                              ],
+                        Obx(
+                          () => AppButton(
+                            onTap:
+                                controller.isLoading.value
+                                    ? null
+                                    : () async {
+                                      await controller.loginWithGoogle();
+                                    },
+                            borderColor: AppColors.whiteColor,
+                            child: Center(
+                              child:
+                                  controller.isLoading.value
+                                      ? SpinKitThreeBounce(
+                                        color: AppColors.whiteColor,
+                                        size: 20.h,
+                                      )
+                                      : Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Image.asset(
+                                            AppImages.googleIcon,
+                                            height: 30.h,
+                                            width: 30.h,
+                                          ),
+                                          10.w.addWSpace(),
+                                          AppText.loginButtonText.styleMedium(
+                                            color: AppColors.whiteColor,
+                                          ),
+                                        ],
+                                      ),
                             ),
                           ),
                         ),

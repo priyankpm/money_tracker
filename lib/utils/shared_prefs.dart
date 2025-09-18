@@ -13,6 +13,7 @@ class SharedPreference {
 
   static const IS_LOGGED_IN = "IS_LOGGED_IN";
   static const USER_UID = "USER_UID";
+  static const USER_NAME = "USER_NAME";
 
   void clearUserItem() async {
     _preferences?.clear();

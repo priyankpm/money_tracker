@@ -27,7 +27,7 @@ class AppText {
   static const String amount2 = "\$ 284.00";
   static const String income = "Incomes";
   static const String expense = "Expenses";
-    static const String todayHistory = "Today History";
+  static const String todayHistory = "Today History";
   static const String seeAll = "See all";
 
   /// PROFILE
@@ -41,7 +41,8 @@ class AppText {
   static const String deleteAccount = "Delete Account";
   static const String close = "Close";
   static const String areYouSure = "Are you sure?";
-  static const String logoutMsg = "Do you really want to log out now? You will need to sign in again to continue using the app.";
+  static const String logoutMsg =
+      "Do you really want to log out?\nYou will need to sign in again to continue using the app.";
   static const String cancel = "Cancel";
 
   /// ADD TRANSACTION
@@ -56,4 +57,12 @@ class AppText {
   /// HISTORY
   static const String transactionsHistory = "Transactions History";
 
+  /// MSGs
+
+  static const String loginSuccess = "Login Successfully";
+  static const String loginFailed = "Login Failed, please try again!";
+  static const String logoutSuccess = "Logged out successfully.";
+  static const String logoutFailed = "Logout failed, please try again!";
+  static const String updateSuccess = "Profile Updated successfully.";
+  static const String updateFailed = "Update profile failed, please try again!";
 }

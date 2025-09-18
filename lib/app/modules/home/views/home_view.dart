@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:money_tracker/app/modules/profile/controllers/profile_controller.dart';
 import 'package:money_tracker/app/routes/app_pages.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_images.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/extenstion.dart';
+import 'package:money_tracker/utils/shared_prefs.dart';
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -58,7 +60,7 @@ class HomeView extends GetView<HomeController> {
                             children: [
                               Row(
                                 children: [
-                                  AppText.goodAfternoon.styleMedium(
+                                  getTimeBasedGreeting().styleMedium(
                                     size: 16.sp,
                                     color: AppColors.whiteColor,
                                   ),
@@ -66,9 +68,17 @@ class HomeView extends GetView<HomeController> {
                                   Image.asset(AppImages.hello, height: 26.h),
                                 ],
                               ),
-                              AppText.name.styleSemiBold(
-                                size: 20.sp,
-                                color: AppColors.whiteColor,
+                              Builder(
+                                builder: (context) {
+
+                                  String? name = preferences.getString(SharedPreference.USER_NAME);
+
+                                  return (name ?? "")
+                                      .styleSemiBold(
+                                        size: 20.sp,
+                                        color: AppColors.whiteColor,
+                                      );
+                                },
                               ),
                             ],
                           ),
@@ -225,7 +235,8 @@ class HomeView extends GetView<HomeController> {
                     padding: EdgeInsets.symmetric(horizontal: 22.w),
                     child: ListView.separated(
                       physics: NeverScrollableScrollPhysics(),
-                      separatorBuilder: (context, index) => Divider(height: 30.h,),
+                      separatorBuilder:
+                          (context, index) => Divider(height: 30.h),
                       padding: EdgeInsets.only(bottom: 70.h),
                       itemCount: 10,
                       shrinkWrap: true,

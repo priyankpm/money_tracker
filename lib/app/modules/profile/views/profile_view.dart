@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_images.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/buttons.dart';
 import 'package:money_tracker/utils/extenstion.dart';
+import 'package:money_tracker/utils/firestore_utils.dart';
+import 'package:money_tracker/utils/snackbar.dart';
 import 'package:money_tracker/utils/textfield.dart';
 
 import '../controllers/profile_controller.dart';
@@ -50,7 +53,9 @@ class ProfileView extends GetView<ProfileController> {
                                     onTap: () async {
                                       Future.delayed(
                                         Duration(milliseconds: 100),
-                                      ).then((value) {});
+                                      ).then((value) {
+                                        showLogoutConfirmationDialog(context);
+                                      });
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.only(right: 22.w),
@@ -160,10 +165,12 @@ class ProfileView extends GetView<ProfileController> {
                               shape: BoxShape.circle,
                             ),
                             child: Center(
-                              child: "E".styleBold(
-                                size: 70.sp,
-                                color: AppColors.primaryColor,
-                              ),
+                              child:
+                                  "${controller.userModel.value?.firstname[0] ?? controller.userModel.value?.lastname[0]}"
+                                      .styleBold(
+                                        size: 70.sp,
+                                        color: AppColors.primaryColor,
+                                      ),
                             ),
                           ),
                         ),
@@ -193,6 +200,8 @@ class ProfileView extends GetView<ProfileController> {
                       AppText.email.styleMedium(size: 14.sp),
                       5.h.addHSpace(),
                       AppTextField(
+                        readonly: true,
+                        suffix: Icon(Icons.lock, color: AppColors.primaryColor),
                         controller: controller.emailController,
                         labelText: AppText.enterHere,
                       ),
@@ -205,13 +214,27 @@ class ProfileView extends GetView<ProfileController> {
                         labelText: AppText.enterHere,
                       ),
                       30.h.addHSpace(),
-                      AppButton(
-                        child: Center(
-                          child: AppText.updateProfile.styleMedium(
-                            color: AppColors.whiteColor,
-                          ),
-                        ),
-                      ),
+                      Obx(() {
+                        return AppButton(
+                          onTap:
+                              controller.isLoading.value
+                                  ? null
+                                  : () async {
+                                    await controller.updateProfile();
+                                  },
+                          child:
+                              controller.isLoading.value
+                                  ? SpinKitThreeBounce(
+                                    color: AppColors.whiteColor,
+                                    size: 20.h,
+                                  )
+                                  : Center(
+                                    child: AppText.updateProfile.styleMedium(
+                                      color: AppColors.whiteColor,
+                                    ),
+                                  ),
+                        );
+                      }),
                     ],
                   ),
                 ),
@@ -228,23 +251,27 @@ class ProfileView extends GetView<ProfileController> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title:AppText.areYouSure.styleSemiBold(),
-          content: AppText.logoutMsg.styleMedium(),
+          title: Center(child: AppText.areYouSure.styleSemiBold(size: 20.sp)),
+          content: AppText.logoutMsg.styleMedium(
+            overflow: TextOverflow.clip,
+            align: TextAlign.center,
+          ),
           actions: <Widget>[
             TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child: const Text("Cancel"),
+              onPressed: () => Get.back(),
+              child: AppText.cancel.styleMedium(color: AppColors.primaryColor),
             ),
             ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
+              onPressed: () async {
+                Get.back();
+                await Future.delayed(Duration(milliseconds: 200)).then((value) {
+                  FireStoreUtils.logout();
+                });
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF1B183E),
               ),
-              child: const Text("Logout"),
+              child: AppText.logout.styleMedium(color: AppColors.whiteColor),
             ),
           ],
         );
