@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:money_tracker/app/models/user_model.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/firestore_utils.dart';
@@ -10,13 +11,22 @@ class AddEntryController extends GetxController {
   final amountController = TextEditingController();
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
-  var dateController =
-      TextEditingController(
-        text: DateFormat('EEE, dd MMM yyyy').format(DateTime.now()),
-      ).obs;
+  var dateController = TextEditingController(text: DateFormat('EEE, dd MMM yyyy').format(DateTime.now()),).obs;
   RxString type = "Income".obs;
   List<String> types = ["Income", "Expense"];
   var isLoading = false.obs;
+  Rx<UserModel?> userModel = Rx<UserModel?>(null);
+
+  @override
+  void onInit() {
+    initData();
+    super.onInit();
+  }
+
+  initData() async {
+    userModel = (await FireStoreUtils.getUserProfile()).obs;
+    update();
+  }
 
   updateType(value) => type.value = value;
 
@@ -90,19 +100,31 @@ class AddEntryController extends GetxController {
         'uid': FireStoreUtils.getCurrentUid(),
       });
 
+      if(type.value.toLowerCase() == 'income'){
+        final totalBalance = (userModel.value?.totalIncome ?? 0.0) + double.parse(amountController.value.text);
+        print('===totalBalance====${totalBalance}');
+        await FireStoreUtils.updateUser({
+          'totalIncome': totalBalance,
+        });
+      }else{
+        final totalBalance = (userModel.value?.totalExpense ?? 0.0) + double.parse(amountController.value.text);
+        await FireStoreUtils.updateUser({
+          'totalExpense': totalBalance,
+        });
+      }
+
       if (isAdded) {
         CommonSnackbar.showSnackbar(
           message: AppText.addTransactionSuccess,
           type: SnackbarType.success,
         );
 
-        titleController.clear();
-        descriptionController.clear();
-        amountController.clear();
-        dateController =
-            TextEditingController(
-              text: DateFormat('EEE, dd MMM yyyy').format(DateTime.now()),
-            ).obs;
+        Get.back();
+
+        // titleController.clear();
+        // descriptionController.clear();
+        // amountController.clear();
+        // dateController = TextEditingController(text: DateFormat('EEE, dd MMM yyyy').format(DateTime.now()),).obs;
       } else {
         CommonSnackbar.showSnackbar(
           message: AppText.addTransactionFailed,

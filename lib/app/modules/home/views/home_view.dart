@@ -115,7 +115,7 @@ class HomeView extends GetView<HomeController> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
+                            Obx(() => Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Row(
@@ -131,15 +131,14 @@ class HomeView extends GetView<HomeController> {
                                     ),
 
                                     Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         AppText.income.styleSemiBold(
                                           size: 14.sp,
                                           color: AppColors.greenColor,
                                         ),
                                         2.h.addHSpace(),
-                                        AppText.amount1.styleBold(
+                                        '\$ ${controller.userModel.value?.totalIncome ?? 0.0}'.styleBold(
                                           size: 16.sp,
                                           color: AppColors.whiteColor,
                                         ),
@@ -159,7 +158,7 @@ class HomeView extends GetView<HomeController> {
                                           color: AppColors.redColor,
                                         ),
                                         2.h.addHSpace(),
-                                        AppText.amount2.styleBold(
+                                        '\$ ${controller.userModel.value?.totalExpense ?? 0.0}'.styleBold(
                                           size: 16.sp,
                                           color: AppColors.whiteColor,
                                         ),
@@ -176,10 +175,10 @@ class HomeView extends GetView<HomeController> {
                                   ],
                                 ),
                               ],
-                            ),
+                            )),
                             Spacer(),
 
-                            Center(
+                            Obx(() => Center(
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -188,13 +187,13 @@ class HomeView extends GetView<HomeController> {
                                     color: AppColors.whiteColor,
                                   ),
                                   5.h.addHSpace(),
-                                  AppText.amount.styleBold(
+                                  '\$ ${(controller.userModel.value?.totalIncome ?? 0.0) - (controller.userModel.value?.totalExpense ?? 0.0)}'.styleBold(
                                     size: 25.sp,
                                     color: AppColors.whiteColor,
                                   ),
                                 ],
                               ),
-                            ),
+                            ))
                           ],
                         ),
                       ),
@@ -305,7 +304,7 @@ class HomeView extends GetView<HomeController> {
                                               size: 15.sp,
                                               color: AppColors.blackColor,
                                             ),
-                                            data.note.styleRegular(
+                                            data.note.isEmpty ? SizedBox() : data.note.styleRegular(
                                               size: 13.sp,
                                               color: AppColors.greyColor,
                                             ),
