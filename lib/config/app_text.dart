@@ -47,6 +47,7 @@ class AppText {
 
   /// ADD TRANSACTION
   static const String addTransaction = "Add Transaction";
+  static const String updateTransaction = "Update Transaction";
   static const String category = "Category";
   static const String note = "Note";
   static const String noteOp = "Note (Optional)";
@@ -55,6 +56,8 @@ class AppText {
   static const String date = "Date";
   static const String save = "Save";
   static const String amountText = "Amount";
+  static const String addCategory = "Add Category";
+  static const String add = "Add";
 
   /// HISTORY
   static const String transactionsHistory = "Transactions History";
@@ -70,6 +73,9 @@ class AppText {
   static const String addTransactionSuccess = "Transaction added successfully.";
   static const String addTransactionFailed =
       "Transaction adding failed, please try again!";
+  static const String addCategorySuccess = "Category added successfully.";
+  static const String addCategoryFailed =
+      "Category adding failed, please try again!";
   static const String pleaseAddFName = "Please enter first name.";
   static const String pleaseAddLName = "Please enter last name.";
   static const String pleaseAddAmount = "Please enter amount.";
@@ -77,4 +83,6 @@ class AppText {
   static const String noRecentTransaction = "No recent transaction!";
   static const String noIncomeTransaction = "No Income transaction!";
   static const String noExpenseTransaction = "No Expense transaction!";
+  static const String pleaseEnterCategoryName = "Please enter category name.";
+  static const String categoryExist = "Category already exist.";
 }

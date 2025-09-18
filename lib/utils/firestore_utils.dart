@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:money_tracker/app/models/category_model.dart';
 import 'package:money_tracker/app/models/transaction_model.dart';
 import 'package:money_tracker/app/models/user_model.dart';
 import 'package:money_tracker/config/app_collection.dart';
@@ -237,6 +238,50 @@ class FireStoreUtils {
           .toList();
     } catch (e) {
       log("Error fetching all expense: $e");
+      return null;
+    }
+  }
+
+  /// ADD CATEGORY
+  static Future<bool> addCategory(Map<String, dynamic> category) async {
+    try {
+      final uid = getCurrentUid();
+      final doc = await fireStore
+          .collection(CollectionName.kUserCollection)
+          .doc(uid)
+          .collection(CollectionName.kCategory)
+          .add({'createdAt': DateTime.now()});
+      category.addEntries([MapEntry('id', doc.id)]);
+      await fireStore
+          .collection(CollectionName.kUserCollection)
+          .doc(uid)
+          .collection(CollectionName.kCategory)
+          .doc(doc.id)
+          .set(category);
+      return true;
+    } catch (e) {
+      log("Error adding category : $e");
+      return false;
+    }
+  }
+
+  /// GET ALL CATEGORY
+  static Future<List<CategoryModel>?> getAllCategory() async {
+    try {
+      final uid = getCurrentUid();
+      final querySnapshot =
+          await fireStore
+              .collection(CollectionName.kUserCollection)
+              .doc(uid)
+              .collection(CollectionName.kCategory)
+              .get();
+
+      if (querySnapshot.docs.isEmpty) return null;
+      return querySnapshot.docs.map((doc) {
+        return CategoryModel.fromJson(doc.data());
+      }).toList();
+    } catch (e) {
+      log("Error fetching all category: $e");
       return null;
     }
   }

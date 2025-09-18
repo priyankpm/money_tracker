@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:money_tracker/app/modules/addEntry/bindings/add_entry_binding.dart';
+import 'package:money_tracker/app/modules/addEntry/controllers/add_entry_controller.dart';
 import 'package:money_tracker/app/modules/bottombar/controllers/bottombar_controller.dart';
 import 'package:money_tracker/app/routes/app_pages.dart';
 import 'package:money_tracker/config/app_color.dart';
@@ -25,7 +27,9 @@ class HomeView extends GetView<HomeController> {
           backgroundColor: AppColors.whiteColor,
           floatingActionButton: GestureDetector(
             onTap: () async {
-              await Get.toNamed(Routes.ADD_ENTRY)?.then((value) async {
+              await Get.toNamed(Routes.ADD_ENTRY,arguments:
+                {"selectedData": null},
+              )?.then((value) async {
                 await controller.getTodayTransaction();
               });
             },
@@ -263,66 +267,75 @@ class HomeView extends GetView<HomeController> {
                                 itemBuilder: (context, index) {
                                   final data =
                                       controller.recentTransaction[index];
-                                  return Row(
-                                    children: [
-                                      Container(
-                                        height: 55.h,
-                                        width: 55.h,
-                                        decoration: BoxDecoration(
-                                          color: AppColors.lightColor,
-                                          borderRadius: BorderRadius.circular(
-                                            10.r,
+                                  return GestureDetector(
+                                    onTap: () async {
+                                      Get.toNamed(
+                                        Routes.ADD_ENTRY,
+                                        arguments: {"selectedData": data},
+                                      );
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          height: 55.h,
+                                          width: 55.h,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.lightColor,
+                                            borderRadius: BorderRadius.circular(
+                                              10.r,
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                getDayAndDate(
+                                                  data.date,
+                                                )["date"]!.styleBold(
+                                                  size: 20.sp,
+                                                  color: AppColors.primaryColor,
+                                                ),
+                                                getDayAndDate(
+                                                  data.date,
+                                                )["day"]!.styleSemiBold(
+                                                  size: 10.sp,
+                                                  color: AppColors.primaryColor,
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                        child: Center(
+                                        10.w.addWSpace(),
+                                        Expanded(
                                           child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
-                                              getDayAndDate(
-                                                data.date,
-                                              )["date"]!.styleBold(
-                                                size: 20.sp,
-                                                color: AppColors.primaryColor,
+                                              data.category.styleSemiBold(
+                                                size: 15.sp,
+                                                color: AppColors.blackColor,
                                               ),
-                                              getDayAndDate(
-                                                data.date,
-                                              )["day"]!.styleSemiBold(
-                                                size: 10.sp,
-                                                color: AppColors.primaryColor,
+                                              data.note.styleRegular(
+                                                size: 13.sp,
+                                                color: AppColors.greyColor,
                                               ),
                                             ],
                                           ),
                                         ),
-                                      ),
-                                      10.w.addWSpace(),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            data.category.styleSemiBold(
-                                              size: 15.sp,
-                                              color: AppColors.blackColor,
-                                            ),
-                                            data.note.styleRegular(
-                                              size: 13.sp,
-                                              color: AppColors.greyColor,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
 
-                                      "${data.type == AppText.incomeText ? "+" : "-"} \$ ${data.amount}"
-                                          .styleSemiBold(
-                                            align: TextAlign.end,
-                                            size: 14.sp,
-                                            color:
-                                                data.type == AppText.incomeText
-                                                    ? AppColors.greenColor
-                                                    : AppColors.redColor,
-                                          ),
-                                    ],
+                                        "${data.type == AppText.incomeText ? "+" : "-"} \$ ${data.amount}"
+                                            .styleSemiBold(
+                                              align: TextAlign.end,
+                                              size: 14.sp,
+                                              color:
+                                                  data.type ==
+                                                          AppText.incomeText
+                                                      ? AppColors.greenColor
+                                                      : AppColors.redColor,
+                                            ),
+                                      ],
+                                    ),
                                   );
                                 },
                               ),

@@ -30,7 +30,7 @@ class AppTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
+    return TextFormField(style: TextStyle(fontSize: 16.sp,fontWeight: FontWeight.w500),
       readOnly: readonly ?? false,
       onTap: onTap,
       minLines: minLines ?? 1,
@@ -42,8 +42,8 @@ class AppTextField extends StatelessWidget {
       decoration: InputDecoration(
         counterText: '',
         suffixIcon: suffix,
-        contentPadding: EdgeInsets.all(15.h),
-        hint: Text(labelText),
+        contentPadding: EdgeInsets.all(14.h),
+        hint: Text(labelText,style: TextStyle(color: AppColors.greyColor.withValues(alpha: 0.8)),),
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: AppColors.greyColor, width: 0.7),
           borderRadius: BorderRadius.circular(8.r),

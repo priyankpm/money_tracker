@@ -1,6 +1,11 @@
+import 'dart:developer';
+
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
+import 'package:money_tracker/app/models/category_model.dart';
 import 'package:money_tracker/app/modules/addEntry/controllers/add_entry_controller.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_images.dart';
@@ -8,10 +13,12 @@ import 'package:money_tracker/config/app_loader.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/buttons.dart';
 import 'package:money_tracker/utils/extenstion.dart';
+import 'package:money_tracker/utils/snackbar.dart';
 import 'package:money_tracker/utils/textfield.dart';
 
 class AddEntryView extends GetView<AddEntryController> {
   const AddEntryView({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -49,10 +56,21 @@ class AddEntryView extends GetView<AddEntryController> {
                     surfaceTintColor: Colors.transparent,
                     backgroundColor: Colors.transparent,
                     centerTitle: true,
-                    title: AppText.addTransaction.styleSemiBold(
-                      size: 20.sp,
-                      color: AppColors.whiteColor,
-                    ),
+                    actions: [
+                      if (controller.isUpdate.value)
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.delete, color: AppColors.redColor),
+                        ),
+                      10.w.addWSpace(),
+                    ],
+                    title: (controller.isUpdate.value
+                            ? AppText.updateTransaction
+                            : AppText.addTransaction)
+                        .styleSemiBold(
+                          size: 20.sp,
+                          color: AppColors.whiteColor,
+                        ),
                   ),
                 ),
               ),
@@ -129,21 +147,90 @@ class AddEntryView extends GetView<AddEntryController> {
 
                         10.h.addHSpace(),
 
+                        AppText.category.styleMedium(size: 14.sp),
+                        5.h.addHSpace(),
+                        Obx(() => Row(
+                            children: [
+                              controller.isUpdate.value && !controller.setDataLoader.value
+                                  ? Expanded(
+                                    flex: 6,
+                                    child: CustomDropdown<String>.search(
+                                      decoration: CustomDropdownDecoration(
+                                        closedBorderRadius:
+                                            BorderRadius.circular(8.r),
+                                        closedBorder: Border.all(
+                                          color: AppColors.greyColor,
+                                          width: 0.7,
+                                        ),
+                                      ),
+                                      hintText: 'Select category',
+                                      items:
+                                          controller.categoryModel
+                                              .map((category) => category.title)
+                                              .toList(),
+                                      excludeSelected: false,
+                                      initialItem:
+                                          controller.selectedModel.value?.category,
+                                      onChanged: (value) {
+                                        controller.titleController.text =
+                                            value ?? "";
+                                      },
+                                    ),
+                                  )
+                                  : Expanded(
+                                    flex: 6,
+                                    child: CustomDropdown<String>.search(
+                                      decoration: CustomDropdownDecoration(
+                                        closedBorderRadius:
+                                            BorderRadius.circular(8.r),
+                                        closedBorder: Border.all(
+                                          color: AppColors.greyColor,
+                                          width: 0.7,
+                                        ),
+                                      ),
+                                      hintText: 'Select category',
+                                      items:
+                                          controller.categoryModel
+                                              .map((category) => category.title)
+                                              .toList(),
+                                      excludeSelected: false,
+
+                                      onChanged: (value) {
+                                        controller.titleController.text =
+                                            value ?? "";
+                                      },
+                                    ),
+                                  ),
+                              SizedBox(width: 10.w),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    showAddCategoryDialog(context);
+                                  },
+                                  child: Container(
+                                    height: 45.h,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primaryColor,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.add,
+                                      color: AppColors.whiteColor,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )),
+
+                        10.h.addHSpace(),
                         AppText.amountText.styleMedium(size: 14.sp),
                         5.h.addHSpace(),
-                        AppTextField(maxLength: 7,
+                        AppTextField(
+                          maxLength: 7,
                           textInputType: TextInputType.number,
                           controller: controller.amountController,
                           labelText: AppText.amountText,
-                          textInputAction: TextInputAction.next,
-                        ),
-                        10.h.addHSpace(),
-
-                        AppText.category.styleMedium(size: 14.sp),
-                        5.h.addHSpace(),
-                        AppTextField(
-                          controller: controller.titleController,
-                          labelText: AppText.category,
                           textInputAction: TextInputAction.next,
                         ),
                         10.h.addHSpace(),
@@ -202,6 +289,77 @@ class AddEntryView extends GetView<AddEntryController> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> showAddCategoryDialog(BuildContext context) async {
+    TextEditingController categoryController = TextEditingController();
+
+    await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Center(child: AppText.addCategory.styleSemiBold(size: 22.sp)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              10.h.addHSpace(),
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: AppTextField(
+                  controller: categoryController,
+                  labelText: "Enter category name",
+                ),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Get.back(),
+              child: AppText.cancel.styleMedium(color: AppColors.primaryColor),
+            ),
+            Obx(
+              () => ElevatedButton(
+                onPressed: () async {
+                  final categoryName = categoryController.text.trim();
+                  if (controller.categoryModel.any(
+                    (element) =>
+                        element.title.toLowerCase() ==
+                        categoryName.toLowerCase(),
+                  )) {
+                    CommonSnackbar.showSnackbar(
+                      message: AppText.categoryExist,
+                      type: SnackbarType.error,
+                    );
+                  } else {
+                    if (categoryName.isNotEmpty) {
+                      await controller.addCategory(categoryName);
+                      Get.back();
+                    } else {
+                      CommonSnackbar.showSnackbar(
+                        message: AppText.pleaseEnterCategoryName,
+                        type: SnackbarType.error,
+                      );
+                    }
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF1B183E),
+                ),
+                child:
+                    controller.categoryLoading.value
+                        ? IntrinsicWidth(
+                          child: SpinKitThreeBounce(
+                            color: AppColors.whiteColor,
+                            size: 15.h,
+                          ),
+                        )
+                        : AppText.add.styleMedium(color: AppColors.whiteColor),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

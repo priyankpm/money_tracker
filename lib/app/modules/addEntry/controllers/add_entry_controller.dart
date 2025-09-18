@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:money_tracker/app/models/category_model.dart';
+import 'package:money_tracker/app/models/transaction_model.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/firestore_utils.dart';
@@ -17,6 +19,45 @@ class AddEntryController extends GetxController {
   RxString type = "Income".obs;
   List<String> types = ["Income", "Expense"];
   var isLoading = false.obs;
+  var categoryLoading = false.obs;
+  var getCategoryLoading = false.obs;
+  RxList<CategoryModel> categoryModel = <CategoryModel>[].obs;
+  RxBool isUpdate = false.obs;
+  RxBool setDataLoader = true.obs;
+
+  Rxn<TransactionModel> selectedModel = Rxn<TransactionModel>();
+
+
+  @override
+  void onInit() {
+    initData();
+
+    super.onInit();
+  }
+
+  initData() async {
+
+    if (Get.arguments["selectedData"] != null) {
+      selectedModel.value = Get.arguments["selectedData"];
+      isUpdate.value =true;
+      amountController.text = selectedModel.value?.amount ??"";
+      titleController.text = selectedModel.value?.category??"";
+      descriptionController.text =selectedModel.value?.note??"";
+      dateController = TextEditingController(
+        text: DateFormat('EEE, dd MMM yyyy').format(selectedModel.value?.date ?? DateTime.now()),
+      ).obs;
+      Future.delayed(Duration(milliseconds: 200));
+      setDataLoader.value = false;
+    }
+
+    await getAllCategory();
+  }
+
+  Future<void> getAllCategory() async {
+    getCategoryLoading.value = true;
+    categoryModel.value = (await FireStoreUtils.getAllCategory() ?? []);
+    getCategoryLoading.value = false;
+  }
 
   updateType(value) => type.value = value;
 
@@ -111,6 +152,32 @@ class AddEntryController extends GetxController {
       }
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> addCategory(String title) async {
+    try {
+      categoryLoading.value = true;
+
+      bool isAdded = await FireStoreUtils.addCategory({
+        'title': title,
+        'date': DateTime.now(),
+      });
+
+      if (isAdded) {
+        CommonSnackbar.showSnackbar(
+          message: AppText.addCategorySuccess,
+          type: SnackbarType.success,
+        );
+        getAllCategory();
+      } else {
+        CommonSnackbar.showSnackbar(
+          message: AppText.addCategoryFailed,
+          type: SnackbarType.error,
+        );
+      }
+    } finally {
+      categoryLoading.value = false;
     }
   }
 }
