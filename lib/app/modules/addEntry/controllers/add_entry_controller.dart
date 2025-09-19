@@ -77,6 +77,21 @@ class AddEntryController extends GetxController {
       return;
     }
 
+    if (amountController.text.isEmpty) {
+      CommonSnackbar.showSnackbar(
+        message: AppText.pleaseAddAmount,
+        type: SnackbarType.error,
+      );
+      return;
+    }
+    if (titleController.text.isEmpty) {
+      CommonSnackbar.showSnackbar(
+        message: AppText.pleaseAddCategory,
+        type: SnackbarType.error,
+      );
+      return;
+    }
+
     try {
       isLoading.value = true;
 

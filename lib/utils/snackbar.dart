@@ -45,7 +45,7 @@ class _TopSnackbarWidget extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 16),
           child: message.styleMedium(
             size: 16.sp,
-            color: AppColors.primaryColor,
+            color: AppColors.whiteColor,
           ),
         ),
       ),

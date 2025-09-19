@@ -1,6 +1,6 @@
 // This is a generated file; do not edit or check into version control.
-FLUTTER_ROOT=D:\Sdk archives\flutter
-FLUTTER_APPLICATION_PATH=C:\Users\Priyank\StudioProjects\money_tracker
+FLUTTER_ROOT=/Users/codeyance/Desktop/sdk/flutter
+FLUTTER_APPLICATION_PATH=/Users/codeyance/StudioProjects/money_tracker
 COCOAPODS_PARALLEL_CODE_SIGN=true
 FLUTTER_BUILD_DIR=build
 FLUTTER_BUILD_NAME=1.0.0
