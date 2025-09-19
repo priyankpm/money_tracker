@@ -80,14 +80,24 @@ class FireStoreUtils {
   /// DELETE USER
   static Future<bool> deleteUser() async {
     try {
-      final uid = getCurrentUid();
-      await fireStore
-          .collection(CollectionName.kUserCollection)
-          .doc(uid)
-          .delete();
+      await FirebaseAuth.instance.currentUser?.delete();
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+      await googleSignIn.disconnect();
+      await googleSignIn.disconnect();
+      await preferences.logOut();
+      await Future.delayed(Duration(milliseconds: 100)).then((value) {
+        CommonSnackbar.showSnackbar(
+          message: AppText.accountDelete,
+          type: SnackbarType.success,
+        );
+      });
       return true;
     } catch (e) {
-      log("Error deleting user: $e");
+      print('====e====$e');
+      CommonSnackbar.showSnackbar(
+        message: AppText.accountDeletionFailed,
+        type: SnackbarType.error,
+      );
       return false;
     }
   }
@@ -174,6 +184,20 @@ class FireStoreUtils {
     }
   }
 
+  /// ADD TRANSACTION
+  static Future<bool> deleteTransaction(String documentId) async {
+    try {
+      final uid = getCurrentUid();
+      await fireStore.collection(CollectionName.kUserCollection)
+        .doc(uid)
+        .collection(CollectionName.kTransactions)
+        .doc(documentId).delete();
+      return true;
+    } catch (e) {
+      log("Error delete transaction : $e");
+      return false;
+    }
+  }
   /// UPDATE TRANSACTION
   static Future<bool> updateTransaction(
     Map<String, dynamic> transaction,
@@ -196,6 +220,7 @@ class FireStoreUtils {
 
   /// GET TODAY'S TRANSACTION
 
+  /// GET TODAY'S TRANSACTION
   static Future<List<TransactionModel>?> getTodayTransaction() async {
     try {
       final uid = getCurrentUid();
@@ -219,7 +244,6 @@ class FireStoreUtils {
   }
 
   /// GET TODAY'S TRANSACTION
-
   static Future<List<TransactionModel>?> getAllIncomes() async {
     try {
       final uid = getCurrentUid();

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+// import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 extension SizedExtension on double {
   Widget addHSpace() => SizedBox(height: this);
@@ -102,22 +102,23 @@ hideKeyboard(BuildContext context) {
 }
 
 String mapAppleErrorToMessage(dynamic error) {
-  if (error is SignInWithAppleAuthorizationException) {
-    switch (error.code) {
-      case AuthorizationErrorCode.canceled:
-        return 'You canceled Apple sign-in.';
-      case AuthorizationErrorCode.failed:
-        return 'Apple sign-in failed. Please try again.';
-      case AuthorizationErrorCode.invalidResponse:
-        return 'Apple returned an invalid response. Try again later.';
-      case AuthorizationErrorCode.notHandled:
-        return 'Apple sign-in could not be handled.';
-      case AuthorizationErrorCode.unknown:
-        return 'An unknown error occurred with Apple sign-in.';
-      default:
-        return 'Something went wrong. Please try again.';
-    }
-  } else if (error is FirebaseAuthException) {
+  // if (error is SignInWithAppleAuthorizationException) {
+  //   switch (error.code) {
+  //     case AuthorizationErrorCode.canceled:
+  //       return 'You canceled Apple sign-in.';
+  //     case AuthorizationErrorCode.failed:
+  //       return 'Apple sign-in failed. Please try again.';
+  //     case AuthorizationErrorCode.invalidResponse:
+  //       return 'Apple returned an invalid response. Try again later.';
+  //     case AuthorizationErrorCode.notHandled:
+  //       return 'Apple sign-in could not be handled.';
+  //     case AuthorizationErrorCode.unknown:
+  //       return 'An unknown error occurred with Apple sign-in.';
+  //     default:
+  //       return 'Something went wrong. Please try again.';
+  //   }
+  // } else
+  if (error is FirebaseAuthException) {
     return mapFirebaseErrorToMessage(error.code);
   } else {
     return 'Unexpected error. Please try again.';

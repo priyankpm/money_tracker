@@ -44,7 +44,7 @@ class BottombarView extends GetView<BottombarController> {
             body: pages[controller.selectedIndex.value],
             bottomNavigationBar: Container(
               color: AppColors.primaryColor,
-              padding: EdgeInsets.only(top: 10.h),
+              padding: EdgeInsets.only(top: 15.h, bottom: 15.h),
               child: AdvancedSalomonBottomBar(
                 decoration: BoxDecoration(color: AppColors.primaryColor),
                 margin: EdgeInsets.symmetric(horizontal: 28.w),

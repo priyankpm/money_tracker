@@ -121,6 +121,7 @@ class AddEntryController extends GetxController {
         'uid': FireStoreUtils.getCurrentUid(),
       });
 
+
       if (type.value.toLowerCase() == 'income') {
         final totalBalance =
             double.parse(userModel.value?.totalIncome.toString() ?? '0.0') +

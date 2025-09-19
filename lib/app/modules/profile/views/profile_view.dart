@@ -76,7 +76,9 @@ class ProfileView extends GetView<ProfileController> {
                                     onTap: () async {
                                       Future.delayed(
                                         Duration(milliseconds: 100),
-                                      ).then((value) {});
+                                      ).then((value) {
+                                        showDeleteUserDialog(context);
+                                      });
                                     },
                                     child: Padding(
                                       padding: EdgeInsets.only(right: 22.w),
@@ -269,6 +271,39 @@ class ProfileView extends GetView<ProfileController> {
                 backgroundColor: Color(0xFF1B183E),
               ),
               child: AppText.logout.styleMedium(color: AppColors.whiteColor),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showDeleteUserDialog(BuildContext context) async {
+    await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Center(child: AppText.areYouSure.styleSemiBold(size: 20.sp)),
+          content: AppText.deleteUser.styleMedium(
+            overflow: TextOverflow.clip,
+            align: TextAlign.center,
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Get.back(),
+              child: AppText.cancel.styleMedium(color: AppColors.primaryColor),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Get.back();
+                await Future.delayed(Duration(milliseconds: 200)).then((value) {
+                  FireStoreUtils.deleteUser();
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF1B183E),
+              ),
+              child: AppText.deleteAccount.styleMedium(color: AppColors.whiteColor),
             ),
           ],
         );
