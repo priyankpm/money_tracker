@@ -184,7 +184,6 @@ class FireStoreUtils {
     }
   }
 
-
   /// UPDATE TRANSACTION
   static Future<bool> updateTransaction(
     Map<String, dynamic> transaction,
@@ -204,8 +203,6 @@ class FireStoreUtils {
       return false;
     }
   }
-
-  /// GET TODAY'S TRANSACTION
 
   /// GET TODAY'S TRANSACTION
   static Future<List<TransactionModel>?> getTodayTransaction() async {
