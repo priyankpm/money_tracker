@@ -184,20 +184,6 @@ class FireStoreUtils {
     }
   }
 
-  /// ADD TRANSACTION
-  static Future<bool> deleteTransaction(String documentId) async {
-    try {
-      final uid = getCurrentUid();
-      await fireStore.collection(CollectionName.kUserCollection)
-        .doc(uid)
-        .collection(CollectionName.kTransactions)
-        .doc(documentId).delete();
-      return true;
-    } catch (e) {
-      log("Error delete transaction : $e");
-      return false;
-    }
-  }
   /// UPDATE TRANSACTION
   static Future<bool> updateTransaction(
     Map<String, dynamic> transaction,
@@ -217,8 +203,6 @@ class FireStoreUtils {
       return false;
     }
   }
-
-  /// GET TODAY'S TRANSACTION
 
   /// GET TODAY'S TRANSACTION
   static Future<List<TransactionModel>?> getTodayTransaction() async {
