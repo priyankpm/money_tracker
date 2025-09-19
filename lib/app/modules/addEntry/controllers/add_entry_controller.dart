@@ -129,13 +129,12 @@ class AddEntryController extends GetxController {
       });
 
       if(type.value.toLowerCase() == 'income'){
-        final totalBalance = (userModel.value?.totalIncome ?? 0.0) + double.parse(amountController.value.text);
-        print('===totalBalance====${totalBalance}');
+        final totalBalance = double.parse(userModel.value?.totalIncome.toString() ?? '0.0') + double.parse(amountController.value.text);
         await FireStoreUtils.updateUser({
           'totalIncome': totalBalance,
         });
       }else{
-        final totalBalance = (userModel.value?.totalExpense ?? 0.0) + double.parse(amountController.value.text);
+        final totalBalance = double.parse(userModel.value?.totalExpense.toString() ?? '0.0') + double.parse(amountController.value.text);
         await FireStoreUtils.updateUser({
           'totalExpense': totalBalance,
         });

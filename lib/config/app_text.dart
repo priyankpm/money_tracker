@@ -41,8 +41,8 @@ class AppText {
   static const String deleteAccount = "Delete Account";
   static const String close = "Close";
   static const String areYouSure = "Are you sure?";
-  static const String logoutMsg =
-      "Do you really want to log out?\nYou will need to sign in again to continue using the app.";
+  static const String logoutMsg = "Do you really want to log out?\nYou will need to sign in again to continue using the app.";
+  static const String deleteUser = "Do you really want to Delete User?\nYou will need to sign in again to continue using the app.";
   static const String cancel = "Cancel";
 
   /// ADD TRANSACTION
@@ -67,7 +67,9 @@ class AppText {
   static const String loginSuccess = "Login successfully";
   static const String loginFailed = "Login failed, please try again!";
   static const String logoutSuccess = "Logged out successfully.";
+  static const String accountDelete = "Account Deleted successfully.";
   static const String logoutFailed = "Logout failed, please try again!";
+  static const String accountDeletionFailed = "Account Deletion failed, please try again!";
   static const String updateSuccess = "Profile updated successfully.";
   static const String updateFailed = "Update profile failed, please try again!";
   static const String addTransactionSuccess = "Transaction added successfully.";
