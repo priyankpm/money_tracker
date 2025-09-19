@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:money_tracker/app/models/transaction_model.dart';
+import 'package:money_tracker/app/modules/home/controllers/home_controller.dart';
+import 'package:money_tracker/app/routes/app_pages.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/extenstion.dart';
@@ -86,7 +88,7 @@ class HistoryView extends GetView<HistoryController> {
                         child: Obx(() {
                           return controller.isLoading.value ? Padding(
                             padding: EdgeInsets.only(
-                              top: MediaQuery.of(context).size.height * 0.26,
+                              top: MediaQuery.of(context).size.height * 0.3,
                             ),
                             child: Center(
                               child: CircularProgressIndicator(
@@ -120,7 +122,7 @@ class HistoryView extends GetView<HistoryController> {
   ) {
     return data1.isEmpty ? Padding(
       padding: EdgeInsets.only(
-        top: MediaQuery.of(context).size.height * 0.2,
+        top: MediaQuery.of(context).size.height * 0.26,
       ),
       child: NoDataWidget(
         msg: controller.type.value == "Income"
@@ -172,19 +174,18 @@ class HistoryView extends GetView<HistoryController> {
                           color: Colors.black,
                         ),
                       ),
-                      // Add divider except after last item
                       if (i != controller.filters.length - 1)
                         const PopupMenuDivider(height: 1,),
                     ]
                   ];
                 },
-              )),
+              ),),
             )
           ],
         ),
 
         controller.filteredTransactions.isEmpty ? Center(
-          heightFactor: 3.2,
+          heightFactor: 3.5,
           child: NoDataWidget(
             msg: controller.type.value == "Income"
                 ? AppText.noIncomeTransaction
@@ -198,56 +199,67 @@ class HistoryView extends GetView<HistoryController> {
           itemCount: controller.filteredTransactions.length,
           shrinkWrap: true,
           itemBuilder: (context, index) {
-            // final data = data1[index];
             final data = controller.filteredTransactions[index];
-            return Row(
-              children: [
-                Container(
-                  height: 55.h,
-                  width: 55.h,
-                  decoration: BoxDecoration(
-                    color: AppColors.lightColor,
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        getDayAndDate(data.date)["date"]!.styleBold(
-                          size: 20.sp,
-                          color: AppColors.primaryColor,
+            return GestureDetector(onTap: () async {
+              await Get.toNamed(
+                Routes.ADD_ENTRY,
+                arguments: {"selectedData": data},
+              )?.then((value) async {
+                controller.getIncomes();
+                controller.getExpense();
+                Get.find<HomeController>().getTodayTransaction();
+              });
+            },
+              child: Container(color: Colors.transparent,
+                child: Row(
+                  children: [
+                    Container(
+                      height: 55.h,
+                      width: 55.h,
+                      decoration: BoxDecoration(
+                        color: AppColors.lightColor,
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            getDayAndDate(data.date)["date"]!.styleBold(
+                              size: 20.sp,
+                              color: AppColors.primaryColor,
+                            ),
+                            getDayAndDate(data.date)["day"]!.styleSemiBold(
+                              size: 10.sp,
+                              color: AppColors.primaryColor,
+                            ),
+                          ],
                         ),
-                        getDayAndDate(data.date)["day"]!.styleSemiBold(
-                          size: 10.sp,
-                          color: AppColors.primaryColor,
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-                10.w.addWSpace(),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      data.category.styleSemiBold(
-                        size: 15.sp,
-                        color: AppColors.blackColor,
+                    10.w.addWSpace(),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          data.category.styleSemiBold(
+                            size: 15.sp,
+                            color: AppColors.blackColor,
+                          ),
+                          data.note.isEmpty ? SizedBox() : data.note.styleRegular(
+                            size: 13.sp,
+                            color: AppColors.greyColor,
+                          ),
+                        ],
                       ),
-                      data.note.isEmpty ? SizedBox() : data.note.styleRegular(
-                        size: 13.sp,
-                        color: AppColors.greyColor,
-                      ),
-                    ],
-                  ),
+                    ),
+                    "${data.type == AppText.incomeText ? "+" : "-"} \$ ${data.amount}".styleSemiBold(
+                      align: TextAlign.end,
+                      size: 14.sp,
+                      color: data.type == AppText.incomeText ? AppColors.greenColor : AppColors.redColor,
+                    ),
+                  ],
                 ),
-                Spacer(),
-                "${data.type == AppText.incomeText ? "+" : "-"} \$ ${data.amount}".styleSemiBold(
-                  align: TextAlign.end,
-                  size: 14.sp,
-                  color: data.type == AppText.incomeText ? AppColors.greenColor : AppColors.redColor,
-                ),
-              ],
+              ),
             );
           },
         ),

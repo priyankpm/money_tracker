@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:money_tracker/app/modules/addEntry/bindings/add_entry_binding.dart';
-import 'package:money_tracker/app/modules/addEntry/controllers/add_entry_controller.dart';
 import 'package:money_tracker/app/modules/bottombar/controllers/bottombar_controller.dart';
 import 'package:money_tracker/app/routes/app_pages.dart';
 import 'package:money_tracker/config/app_color.dart';
@@ -27,9 +25,7 @@ class HomeView extends GetView<HomeController> {
           backgroundColor: AppColors.whiteColor,
           floatingActionButton: GestureDetector(
             onTap: () async {
-              await Get.toNamed(Routes.ADD_ENTRY,arguments:
-                {"selectedData": null},
-              )?.then((value) async {
+              await Get.toNamed(Routes.ADD_ENTRY)?.then((value) async {
                 await controller.getTodayTransaction();
               });
             },
@@ -119,85 +115,96 @@ class HomeView extends GetView<HomeController> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Obx(() => Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      height: 25.h,
-                                      width: 25.h,
-                                      margin: EdgeInsets.only(right: 8.w),
-                                      child: SvgPicture.asset(
-                                        AppImages.upArrowIcon,
-                                      ),
-                                    ),
-
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        AppText.income.styleSemiBold(
-                                          size: 14.sp,
-                                          color: AppColors.greenColor,
-                                        ),
-                                        2.h.addHSpace(),
-                                        '\$ ${controller.userModel.value?.totalIncome ?? 0.0}'.styleBold(
-                                          size: 16.sp,
-                                          color: AppColors.whiteColor,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        AppText.expense.styleSemiBold(
-                                          size: 14.sp,
-                                          color: AppColors.redColor,
-                                        ),
-                                        2.h.addHSpace(),
-                                        '\$ ${controller.userModel.value?.totalExpense ?? 0.0}'.styleBold(
-                                          size: 16.sp,
-                                          color: AppColors.whiteColor,
-                                        ),
-                                      ],
-                                    ),
-                                    Container(
-                                      height: 25.h,
-                                      width: 25.h,
-                                      margin: EdgeInsets.only(left: 8.w),
-                                      child: SvgPicture.asset(
-                                        AppImages.downArrowIcon,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            )),
-                            Spacer(),
-
-                            Obx(() => Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                            Obx(
+                              () => Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  AppText.totalBalance.styleSemiBold(
-                                    size: 16.sp,
-                                    color: AppColors.whiteColor,
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        height: 25.h,
+                                        width: 25.h,
+                                        margin: EdgeInsets.only(right: 8.w),
+                                        child: SvgPicture.asset(
+                                          AppImages.upArrowIcon,
+                                        ),
+                                      ),
+
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          AppText.income.styleSemiBold(
+                                            size: 14.sp,
+                                            color: AppColors.greenColor,
+                                          ),
+                                          2.h.addHSpace(),
+                                          '\$ ${controller.userModel.value?.totalIncome ?? 0.0}'
+                                              .styleBold(
+                                                size: 16.sp,
+                                                color: AppColors.whiteColor,
+                                              ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
-                                  5.h.addHSpace(),
-                                  '\$ ${(controller.userModel.value?.totalIncome ?? 0.0) - (controller.userModel.value?.totalExpense ?? 0.0)}'.styleBold(
-                                    size: 25.sp,
-                                    color: AppColors.whiteColor,
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          AppText.expense.styleSemiBold(
+                                            size: 14.sp,
+                                            color: AppColors.redColor,
+                                          ),
+                                          2.h.addHSpace(),
+                                          '\$ ${controller.userModel.value?.totalExpense ?? 0.0}'
+                                              .styleBold(
+                                                size: 16.sp,
+                                                color: AppColors.whiteColor,
+                                              ),
+                                        ],
+                                      ),
+                                      Container(
+                                        height: 25.h,
+                                        width: 25.h,
+                                        margin: EdgeInsets.only(left: 8.w),
+                                        child: SvgPicture.asset(
+                                          AppImages.downArrowIcon,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                            ))
+                            ),
+                            Spacer(),
+
+                            Obx(
+                              () => Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    AppText.totalBalance.styleSemiBold(
+                                      size: 16.sp,
+                                      color: AppColors.whiteColor,
+                                    ),
+                                    5.h.addHSpace(),
+                                    '\$ ${(controller.userModel.value?.totalIncome ?? 0.0) - (controller.userModel.value?.totalExpense ?? 0.0)}'
+                                        .styleBold(
+                                          size: 25.sp,
+                                          color: AppColors.whiteColor,
+                                        ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -219,17 +226,20 @@ class HomeView extends GetView<HomeController> {
                     AppText.recentHistory.styleSemiBold(
                       color: AppColors.blackColor,
                     ),
-                    controller.recentTransaction.length == 10
-                        ? GestureDetector(
-                          onTap: () {
-                            Get.find<BottombarController>().changeTab(1);
-                          },
-                          child: AppText.seeAll.styleRegular(
-                            size: 14.sp,
-                            color: AppColors.greyColor,
-                          ),
-                        )
-                        : SizedBox(),
+                    Obx(
+                      () =>
+                          controller.recentTransaction.length == 10
+                              ? GestureDetector(
+                                onTap: () {
+                                  Get.find<BottombarController>().changeTab(1);
+                                },
+                                child: AppText.seeAll.styleRegular(
+                                  size: 14.sp,
+                                  color: AppColors.greyColor,
+                                ),
+                              )
+                              : SizedBox(),
+                    ),
                   ],
                 ),
               ),
@@ -268,72 +278,81 @@ class HomeView extends GetView<HomeController> {
                                       controller.recentTransaction[index];
                                   return GestureDetector(
                                     onTap: () async {
-                                      Get.toNamed(
+                                      await Get.toNamed(
                                         Routes.ADD_ENTRY,
                                         arguments: {"selectedData": data},
-                                      );
+                                      )?.then((value) async {
+                                        await controller.getTodayTransaction();
+                                      });
                                     },
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          height: 55.h,
-                                          width: 55.h,
-                                          decoration: BoxDecoration(
-                                            color: AppColors.lightColor,
-                                            borderRadius: BorderRadius.circular(
-                                              10.r,
+                                    child: Container(
+                                      color: Colors.transparent,
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            height: 55.h,
+                                            width: 55.h,
+                                            decoration: BoxDecoration(
+                                              color: AppColors.lightColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(10.r),
+                                            ),
+                                            child: Center(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  getDayAndDate(
+                                                    data.date,
+                                                  )["date"]!.styleBold(
+                                                    size: 20.sp,
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                  ),
+                                                  getDayAndDate(
+                                                    data.date,
+                                                  )["day"]!.styleSemiBold(
+                                                    size: 10.sp,
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
-                                          child: Center(
+                                          10.w.addWSpace(),
+                                          Expanded(
                                             child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
-                                                getDayAndDate(
-                                                  data.date,
-                                                )["date"]!.styleBold(
-                                                  size: 20.sp,
-                                                  color: AppColors.primaryColor,
+                                                data.category.styleSemiBold(
+                                                  size: 15.sp,
+                                                  color: AppColors.blackColor,
                                                 ),
-                                                getDayAndDate(
-                                                  data.date,
-                                                )["day"]!.styleSemiBold(
-                                                  size: 10.sp,
-                                                  color: AppColors.primaryColor,
-                                                ),
+                                                data.note.isEmpty
+                                                    ? SizedBox()
+                                                    : data.note.styleRegular(
+                                                      size: 13.sp,
+                                                      color:
+                                                          AppColors.greyColor,
+                                                    ),
                                               ],
                                             ),
                                           ),
-                                        ),
-                                        10.w.addWSpace(),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              data.category.styleSemiBold(
-                                                size: 15.sp,
-                                                color: AppColors.blackColor,
-                                              ),
-                                              data.note.isEmpty ? SizedBox() :data.note.styleRegular(
-                                                size: 13.sp,
-                                                color: AppColors.greyColor,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
 
-                                        "${data.type == AppText.incomeText ? "+" : "-"} \$ ${data.amount}"
-                                            .styleSemiBold(
-                                              align: TextAlign.end,
-                                              size: 14.sp,
-                                              color:
-                                                  data.type ==
-                                                          AppText.incomeText
-                                                      ? AppColors.greenColor
-                                                      : AppColors.redColor,
-                                            ),
-                                      ],
+                                          "${data.type == AppText.incomeText ? "+" : "-"} \$ ${data.amount}"
+                                              .styleSemiBold(
+                                                align: TextAlign.end,
+                                                size: 14.sp,
+                                                color:
+                                                    data.type ==
+                                                            AppText.incomeText
+                                                        ? AppColors.greenColor
+                                                        : AppColors.redColor,
+                                              ),
+                                        ],
+                                      ),
                                     ),
                                   );
                                 },
