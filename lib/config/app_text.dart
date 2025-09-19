@@ -58,6 +58,8 @@ class AppText {
   static const String amountText = "Amount";
   static const String addCategory = "Add Category";
   static const String add = "Add";
+  static const String deleteTransactionMsg = "Do you really want to delete this transaction?";
+  static const String delete = "Delete";
 
   /// HISTORY
   static const String transactionsHistory = "Transactions History";
@@ -73,9 +75,15 @@ class AppText {
   static const String addTransactionSuccess = "Transaction added successfully.";
   static const String addTransactionFailed =
       "Transaction adding failed, please try again!";
+  static const String updateTransactionSuccess = "Transaction updated successfully.";
+  static const String updateTransactionFailed =
+      "Transaction updating failed, please try again!";
   static const String addCategorySuccess = "Category added successfully.";
   static const String addCategoryFailed =
       "Category adding failed, please try again!";
+  static const String deleteTransactionSuccess = "Transaction deleted successfully.";
+  static const String deleteTransactionFailed =
+      "Transaction deleting failed, please try again!";
   static const String pleaseAddFName = "Please enter first name.";
   static const String pleaseAddLName = "Please enter last name.";
   static const String pleaseAddAmount = "Please enter amount.";

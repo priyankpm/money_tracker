@@ -23,4 +23,5 @@ class AppImages {
   static const chart1 = "${iconPath}chart_1.svg";
   static const profile1 = "${iconPath}user_1.svg";
   static const noData = "${iconPath}no_daa.svg";
+  static const deleteAccount = "${iconPath}delete_icon.png";
 }

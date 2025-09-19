@@ -174,6 +174,26 @@ class FireStoreUtils {
     }
   }
 
+  /// UPDATE TRANSACTION
+  static Future<bool> updateTransaction(
+    Map<String, dynamic> transaction,
+    String id,
+  ) async {
+    try {
+      final uid = getCurrentUid();
+      await fireStore
+          .collection(CollectionName.kUserCollection)
+          .doc(uid)
+          .collection(CollectionName.kTransactions)
+          .doc(id)
+          .update(transaction);
+      return true;
+    } catch (e) {
+      log("Error adding transaction : $e");
+      return false;
+    }
+  }
+
   /// GET TODAY'S TRANSACTION
 
   static Future<List<TransactionModel>?> getTodayTransaction() async {
@@ -283,6 +303,24 @@ class FireStoreUtils {
     } catch (e) {
       log("Error fetching all category: $e");
       return null;
+    }
+  }
+
+  /// DELETE CATEGORY
+
+  static Future<bool> deleteTransaction(String id) async {
+    try {
+      final uid = getCurrentUid();
+      await fireStore
+          .collection(CollectionName.kUserCollection)
+          .doc(uid)
+          .collection(CollectionName.kTransactions)
+          .doc(id)
+          .delete();
+      return true;
+    } catch (e) {
+      log("Error on delete category : $e");
+      return false;
     }
   }
 }

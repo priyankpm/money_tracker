@@ -13,18 +13,19 @@ class AddEntryController extends GetxController {
   final amountController = TextEditingController();
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
-  var dateController = TextEditingController(text: DateFormat('EEE, dd MMM yyyy').format(DateTime.now()),).obs;
+  var dateController =
+      TextEditingController(
+        text: DateFormat('EEE, dd MMM yyyy').format(DateTime.now()),
+      ).obs;
   RxString type = "Income".obs;
   List<String> types = ["Income", "Expense"];
   var isLoading = false.obs;
+  var deleteLoading = false.obs;
   var categoryLoading = false.obs;
   var getCategoryLoading = false.obs;
   RxList<CategoryModel> categoryModel = <CategoryModel>[].obs;
-  RxBool isUpdate = false.obs;
-  RxBool setDataLoader = true.obs;
   Rxn<TransactionModel> selectedModel = Rxn<TransactionModel>();
   Rx<UserModel?> userModel = Rx<UserModel?>(null);
-
 
   @override
   void onInit() {
@@ -34,20 +35,7 @@ class AddEntryController extends GetxController {
 
   initData() async {
     userModel = (await FireStoreUtils.getUserProfile()).obs;
-    if (Get.arguments["selectedData"] != null) {
-      selectedModel.value = Get.arguments["selectedData"];
-      isUpdate.value =true;
-      amountController.text = selectedModel.value?.amount ??"";
-      titleController.text = selectedModel.value?.category??"";
-      descriptionController.text =selectedModel.value?.note??"";
-      dateController = TextEditingController(
-        text: DateFormat('EEE, dd MMM yyyy').format(selectedModel.value?.date ?? DateTime.now()),
-      ).obs;
-      Future.delayed(Duration(milliseconds: 200));
-      setDataLoader.value = false;
-    }
-
-    await getAllCategory();
+    getAllCategory();
   }
 
   Future<void> getAllCategory() async {
@@ -87,6 +75,11 @@ class AddEntryController extends GetxController {
   }
 
   Future<void> addTransaction() async {
+    if (Get.arguments["selectedData"] != null) {
+      await updateTransaction();
+      return;
+    }
+
     try {
       if (amountController.text.isEmpty) {
         CommonSnackbar.showSnackbar(
@@ -128,17 +121,16 @@ class AddEntryController extends GetxController {
         'uid': FireStoreUtils.getCurrentUid(),
       });
 
-      if(type.value.toLowerCase() == 'income'){
-        final totalBalance = (userModel.value?.totalIncome ?? 0.0) + double.parse(amountController.value.text);
-        print('===totalBalance====${totalBalance}');
-        await FireStoreUtils.updateUser({
-          'totalIncome': totalBalance,
-        });
-      }else{
-        final totalBalance = (userModel.value?.totalExpense ?? 0.0) + double.parse(amountController.value.text);
-        await FireStoreUtils.updateUser({
-          'totalExpense': totalBalance,
-        });
+      if (type.value.toLowerCase() == 'income') {
+        final totalBalance =
+            double.parse(userModel.value?.totalIncome.toString() ?? '0.0') +
+            double.parse(amountController.value.text);
+        await FireStoreUtils.updateUser({'totalIncome': totalBalance});
+      } else {
+        final totalBalance =
+            double.parse(userModel.value?.totalExpense.toString() ?? '0.0') +
+            double.parse(amountController.value.text);
+        await FireStoreUtils.updateUser({'totalExpense': totalBalance});
       }
 
       if (isAdded) {
@@ -153,6 +145,77 @@ class AddEntryController extends GetxController {
         // descriptionController.clear();
         // amountController.clear();
         // dateController = TextEditingController(text: DateFormat('EEE, dd MMM yyyy').format(DateTime.now()),).obs;
+      } else {
+        CommonSnackbar.showSnackbar(
+          message: AppText.addTransactionFailed,
+          type: SnackbarType.error,
+        );
+      }
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> updateTransaction() async {
+    try {
+      if (amountController.text.isEmpty) {
+        CommonSnackbar.showSnackbar(
+          message: AppText.pleaseAddAmount,
+          type: SnackbarType.error,
+        );
+        return;
+      }
+      if (titleController.text.isEmpty) {
+        CommonSnackbar.showSnackbar(
+          message: AppText.pleaseAddCategory,
+          type: SnackbarType.error,
+        );
+        return;
+      }
+
+      isLoading.value = true;
+
+      DateTime selectedDate = DateFormat(
+        'EEE, dd MMM yyyy',
+      ).parse(dateController.value.text);
+      final now = DateTime.now();
+
+      final dateTimeWithCurrentTime = DateTime(
+        selectedDate.year,
+        selectedDate.month,
+        selectedDate.day,
+        now.hour,
+        now.minute,
+        now.second,
+      );
+
+      bool isAdded = await FireStoreUtils.updateTransaction({
+        'type': type.value,
+        'category': titleController.text,
+        'note': descriptionController.text,
+        'date': dateTimeWithCurrentTime,
+        'amount': amountController.value.text,
+        'uid': FireStoreUtils.getCurrentUid(),
+      }, selectedModel.value?.id ?? "");
+
+      if (type.value.toLowerCase() == 'income') {
+        final totalBalance =
+            double.parse(userModel.value?.totalIncome.toString() ?? '0.0') +
+            double.parse(amountController.value.text);
+        await FireStoreUtils.updateUser({'totalIncome': totalBalance});
+      } else {
+        final totalBalance =
+            double.parse(userModel.value?.totalExpense.toString() ?? '0.0') +
+            double.parse(amountController.value.text);
+        await FireStoreUtils.updateUser({'totalExpense': totalBalance});
+      }
+
+      if (isAdded) {
+        CommonSnackbar.showSnackbar(
+          message: AppText.addTransactionSuccess,
+          type: SnackbarType.success,
+        );
+        Get.back();
       } else {
         CommonSnackbar.showSnackbar(
           message: AppText.addTransactionFailed,
@@ -187,6 +250,30 @@ class AddEntryController extends GetxController {
       }
     } finally {
       categoryLoading.value = false;
+    }
+  }
+
+  Future<void>deleteTransaction(String id) async {
+    try {
+      deleteLoading.value = true;
+
+      bool isAdded = await FireStoreUtils.deleteTransaction(id);
+
+      if (isAdded) {
+        Get.back();
+        CommonSnackbar.showSnackbar(
+          message: AppText.deleteTransactionSuccess,
+          type: SnackbarType.success,
+        );
+        getAllCategory();
+      } else {
+        CommonSnackbar.showSnackbar(
+          message: AppText.deleteTransactionFailed,
+          type: SnackbarType.error,
+        );
+      }
+    } finally {
+      deleteLoading.value = false;
     }
   }
 }
