@@ -26,7 +26,9 @@ class HomeView extends GetView<HomeController> {
           floatingActionButton: GestureDetector(
             onTap: () async {
               await Get.toNamed(Routes.ADD_ENTRY)?.then((value) async {
-                await controller.getTodayTransaction();
+                if(value == true){
+                  await controller.getTodayTransaction();
+                }
               });
             },
             child: Container(
@@ -282,7 +284,9 @@ class HomeView extends GetView<HomeController> {
                                         Routes.ADD_ENTRY,
                                         arguments: {"selectedData": data},
                                       )?.then((value) async {
-                                        await controller.getTodayTransaction();
+                                        if(value ==true){
+                                          await controller.getTodayTransaction();
+                                        }
                                       });
                                     },
                                     child: Container(
