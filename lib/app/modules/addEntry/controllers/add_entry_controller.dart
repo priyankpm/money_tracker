@@ -78,21 +78,6 @@ class AddEntryController extends GetxController {
     }
 
     try {
-      if (amountController.text.isEmpty) {
-        CommonSnackbar.showSnackbar(
-          message: AppText.pleaseAddAmount,
-          type: SnackbarType.error,
-        );
-        return;
-      }
-      if (titleController.text.isEmpty) {
-        CommonSnackbar.showSnackbar(
-          message: AppText.pleaseAddCategory,
-          type: SnackbarType.error,
-        );
-        return;
-      }
-
       isLoading.value = true;
 
       DateTime selectedDate = DateFormat(
@@ -136,12 +121,8 @@ class AddEntryController extends GetxController {
           type: SnackbarType.success,
         );
 
-        Get.back();
+        Get.back(result: true);
 
-        // titleController.clear();
-        // descriptionController.clear();
-        // amountController.clear();
-        // dateController = TextEditingController(text: DateFormat('EEE, dd MMM yyyy').format(DateTime.now()),).obs;
       } else {
         CommonSnackbar.showSnackbar(
           message: AppText.addTransactionFailed,
@@ -212,7 +193,7 @@ class AddEntryController extends GetxController {
           message: AppText.addTransactionSuccess,
           type: SnackbarType.success,
         );
-        Get.back();
+        Get.back(result: true);
       } else {
         CommonSnackbar.showSnackbar(
           message: AppText.addTransactionFailed,
@@ -250,13 +231,14 @@ class AddEntryController extends GetxController {
     }
   }
 
-  Future<void>deleteTransaction(String id) async {
+  Future<void> deleteTransaction(String id) async {
     try {
       deleteLoading.value = true;
 
       bool isAdded = await FireStoreUtils.deleteTransaction(id);
 
       if (isAdded) {
+
         if (type.value.toLowerCase() == 'income') {
           final totalBalance =
               (double.parse(userModel.value?.totalIncome.toString() ?? '0.0') - double.parse(selectedModel.value?.amount.toString() ?? '0.0'));
@@ -267,7 +249,9 @@ class AddEntryController extends GetxController {
 
           await FireStoreUtils.updateUser({'totalExpense': totalBalance});
         }
-        Get.back();
+
+        Get.back(result: true);
+
         CommonSnackbar.showSnackbar(
           message: AppText.deleteTransactionSuccess,
           type: SnackbarType.success,

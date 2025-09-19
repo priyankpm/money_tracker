@@ -198,29 +198,21 @@ class AddEntryView extends GetView<AddEntryController> {
                                                   .isNotEmpty
                                           ? Expanded(
                                             flex: 6,
-                                            child: CustomDropdown<
-                                              String
-                                            >.search(
+                                            child: CustomDropdown<String>.search(
                                               decoration:
                                                   CustomDropdownDecoration(
+                                                    expandedFillColor: AppColors.whiteColor,
+                                                     expandedBorder: Border.all(color: AppColors.primaryColor),
                                                     closedBorderRadius:
-                                                        BorderRadius.circular(
-                                                          8.r,
-                                                        ),
+                                                        BorderRadius.circular(8.r),
                                                     closedBorder: Border.all(
-                                                      color:
-                                                          AppColors.greyColor,
+                                                      color: AppColors.greyColor,
                                                       width: 0.7,
                                                     ),
                                                   ),
                                               hintText: 'Select category',
                                               items:
-                                                  controller.categoryModel
-                                                      .map(
-                                                        (category) =>
-                                                            category.title,
-                                                      )
-                                                      .toList(),
+                                                  controller.categoryModel.map((category) => category.title,).toList(),
                                               excludeSelected: false,
                                               initialItem:
                                                   controller
@@ -231,6 +223,7 @@ class AddEntryView extends GetView<AddEntryController> {
                                                     .titleController
                                                     .text = value ?? "";
                                               },
+
                                             ),
                                           )
                                           : Expanded(

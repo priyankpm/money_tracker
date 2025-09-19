@@ -205,9 +205,11 @@ class HistoryView extends GetView<HistoryController> {
                 Routes.ADD_ENTRY,
                 arguments: {"selectedData": data},
               )?.then((value) async {
-                controller.getIncomes();
-                controller.getExpense();
-                Get.find<HomeController>().getTodayTransaction();
+                if(value == true){
+                  controller.getIncomes();
+                  controller.getExpense();
+                  Get.find<HomeController>().getTodayTransaction();
+                }
               });
             },
               child: Container(color: Colors.transparent,
