@@ -153,27 +153,52 @@ class ProfileView extends GetView<ProfileController> {
                           ],
                           shape: BoxShape.circle,
                         ),
-                        child: Center(
-                          child: Container(
-                            height: 110.h,
-                            width: 110.h,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: AppColors.primaryColor,
-                                width: 1.5,
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Center(
+                              child: Container(
+                                height: 110.h,
+                                width: 110.h,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: AppColors.primaryColor,
+                                    width: 1.5,
+                                  ),
+                                  color: AppColors.whiteColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child:
+                                      "${controller.userModel.value?.firstname[0] ?? controller.userModel.value?.lastname[0]}"
+                                          .styleBold(
+                                            size: 70.sp,
+                                            color: AppColors.primaryColor,
+                                          ),
+                                ),
                               ),
-                              color: AppColors.whiteColor,
-                              shape: BoxShape.circle,
                             ),
-                            child: Center(
-                              child:
-                                  "${controller.userModel.value?.firstname[0] ?? controller.userModel.value?.lastname[0]}"
-                                      .styleBold(
-                                        size: 70.sp,
-                                        color: AppColors.primaryColor,
-                                      ),
+
+                            Positioned(
+                              right: 0.w,
+                              bottom: -20.h,
+                              child: Container(
+                                height: 35.h,
+                                width: 35.h,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: AppColors.primaryColor,
+                                  ),
+                                  color: AppColors.whiteColor,
+                                ),
+                                child: Icon(
+                                  Icons.camera,
+                                  color: AppColors.primaryColor,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
                     ),
@@ -221,7 +246,6 @@ class ProfileView extends GetView<ProfileController> {
                               controller.isLoading.value
                                   ? null
                                   : () async {
-
                                     await controller.updateProfile();
                                   },
                           child:
@@ -303,7 +327,9 @@ class ProfileView extends GetView<ProfileController> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF1B183E),
               ),
-              child: AppText.deleteAccount.styleMedium(color: AppColors.whiteColor),
+              child: AppText.deleteAccount.styleMedium(
+                color: AppColors.whiteColor,
+              ),
             ),
           ],
         );
