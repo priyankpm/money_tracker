@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,6 +10,7 @@ import 'package:money_tracker/utils/firestore_utils.dart';
 import 'package:money_tracker/utils/snackbar.dart';
 
 class ProfileController extends GetxController {
+  final FirebaseStorage _storage = FirebaseStorage.instance;
   final fNameController = TextEditingController();
   final lNameController = TextEditingController();
   final mobileController = TextEditingController();
@@ -17,10 +18,7 @@ class ProfileController extends GetxController {
   Rx<UserModel?> userModel = Rx<UserModel?>(null);
   var isLoading = false.obs;
   final ImagePicker _picker = ImagePicker();
-  File? _imageFile;
-  String? _uploadedImageUrl;
-  final String cloudName = 'dqpbmpg4d';
-  final String uploadPreset = 'ml_default';
+  Rx<File?> imageFile = Rx<File?>(null);
 
   @override
   void onInit() {
@@ -55,11 +53,19 @@ class ProfileController extends GetxController {
       }
 
       isLoading.value = true;
+
+      String imageUrl = userModel.value?.photoURL ?? "";
+
+      if (imageFile.value != null) {
+        imageUrl = await uploadProfileImage() ?? "";
+      }
+
       bool isUpdated = await FireStoreUtils.updateUser({
         'firstname': fNameController.text,
         'lastname': lNameController.text,
         'email': emailController.text,
         'phoneNumber': mobileController.text,
+        'photoURL': imageUrl,
       });
 
       if (isUpdated) {
@@ -78,42 +84,32 @@ class ProfileController extends GetxController {
     }
   }
 
-  Future<void> _pickImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+  clearValue() async {
+    userModel = (await FireStoreUtils.getUserProfile()).obs;
+    fNameController.text = userModel.value?.firstname ?? "";
+    lNameController.text = userModel.value?.lastname ?? "";
+    mobileController.text = userModel.value?.phoneNumber ?? "";
+    emailController.text = userModel.value?.email ?? "";
+    imageFile = Rx<File?>(null);
+  }
+
+  Future<void> pickImage(ImageSource type) async {
+    final pickedFile = await _picker.pickImage(source: type, imageQuality: 50);
     if (pickedFile != null) {
-      _imageFile = File(pickedFile.path);
-      _uploadedImageUrl = null;
+      imageFile.value = File(pickedFile.path);
       update();
     }
   }
 
-  Future<void> _uploadImage() async {
-    if (_imageFile == null) return;
-
-    final url = Uri.parse(
-      'https://api.cloudinary.com/v1_1/$cloudName/image/upload',
-    );
-
-    final request =
-        http.MultipartRequest('POST', url)
-          ..fields['upload_preset'] = uploadPreset
-          ..files.add(
-            await http.MultipartFile.fromPath('file', _imageFile!.path),
-          );
-
-    final response = await request.send();
-
-     if (response.statusCode == 200) {
-      final respStr = await response.stream.bytesToString();
-      final Map<String, dynamic> responseData = json.decode(respStr);
-
-      _uploadedImageUrl = responseData['secure_url'];
-      update();
-    } else {
-      print('Upload failed with status: ${response.statusCode}');
-
-      _uploadedImageUrl = null;
-      update();
+  Future<String?> uploadProfileImage() async {
+    try {
+      String userId = FireStoreUtils.getCurrentUid();
+      final ref = _storage.ref().child('$userId/profile.jpg');
+      await ref.putFile(imageFile.value!);
+      final downloadUrl = await ref.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      return null;
     }
   }
 }

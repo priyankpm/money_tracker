@@ -7,6 +7,7 @@ class TransactionModel {
   final String note;
   final String type;
   final String category;
+  final String attachment;
   final DateTime date;
 
   TransactionModel({
@@ -17,6 +18,7 @@ class TransactionModel {
     required this.type,
     required this.category,
     required this.date,
+    required this.attachment,
   });
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) {
@@ -27,6 +29,7 @@ class TransactionModel {
       note: json['note'] ?? '',
       type: json['type'] ?? '',
       category: json['category'] ?? '',
+      attachment: json['attachment'] ?? '',
       date: (json['date'] as Timestamp).toDate(),
     );
   }
@@ -38,6 +41,7 @@ class TransactionModel {
       'amount': amount,
       'note': note,
       'type': type,
+      'attachment': attachment,
       'category': category,
       'date': Timestamp.fromDate(date),
     };

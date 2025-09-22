@@ -44,6 +44,8 @@ class AppText {
   static const String logoutMsg = "Do you really want to log out?\nYou will need to sign in again to continue using the app.";
   static const String deleteUser = "Do you really want to Delete User?\nYou will need to sign in again to continue using the app.";
   static const String cancel = "Cancel";
+  static const String camera = "Camera";
+  static const String gallery = "Gallery";
 
   /// ADD TRANSACTION
   static const String addTransaction = "Add Transaction";
@@ -54,12 +56,15 @@ class AppText {
   static const String incomeText = "Income";
   static const String expenseText = "Expense";
   static const String date = "Date";
+  static const String attachment = "Attachment";
   static const String save = "Save";
   static const String amountText = "Amount";
   static const String addCategory = "Add Category";
   static const String add = "Add";
   static const String deleteTransactionMsg = "Do you really want to delete this transaction?";
   static const String delete = "Delete";
+  static const String addAttachment = "Add Attachment";
+  static const String seeAttachment = "See Attachment";
 
   /// HISTORY
   static const String transactionsHistory = "Transactions History";

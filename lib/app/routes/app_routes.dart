@@ -12,6 +12,7 @@ abstract class Routes {
   static const ADD_ENTRY = _Paths.ADD_ENTRY;
   static const HISTORY = _Paths.HISTORY;
   static const HISTORYPAGE = _Paths.HISTORYPAGE;
+  static const IMAGEPRIVEW = _Paths.IMAGEPRIVEW;
 }
 
 abstract class _Paths {
@@ -25,4 +26,5 @@ abstract class _Paths {
   static const ADD_ENTRY = '/add-entry';
   static const HISTORY = '/history';
   static const HISTORYPAGE = '/historypage';
+  static const IMAGEPRIVEW = '/imageprivew';
 }

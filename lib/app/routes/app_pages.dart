@@ -1,6 +1,4 @@
 import 'package:get/get.dart';
-import 'package:money_tracker/app/modules/historypage/controllers/history_controller.dart';
-
 import '../modules/addEntry/bindings/add_entry_binding.dart';
 import '../modules/addEntry/views/add_entry_view.dart';
 import '../modules/bottombar/bindings/bottombar_binding.dart';
@@ -9,6 +7,7 @@ import '../modules/historypage/bindings/history_binding.dart';
 import '../modules/historypage/views/history_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
+import '../modules/addEntry/views/imageprivew_view.dart';
 import '../modules/intro/bindings/intro_binding.dart';
 import '../modules/intro/views/intro_view.dart';
 import '../modules/login/bindings/login_binding.dart';
@@ -17,7 +16,6 @@ import '../modules/profile/bindings/profile_binding.dart';
 import '../modules/profile/views/profile_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
-
 part 'app_routes.dart';
 
 class AppPages {
@@ -77,6 +75,10 @@ class AppPages {
       name: _Paths.HISTORYPAGE,
       page: () => const HistoryView(),
       binding: HistoryBinding(),
+    ),
+    GetPage(
+      name: _Paths.IMAGEPRIVEW,
+      page: () => const ImageView(),
     ),
   ];
 }

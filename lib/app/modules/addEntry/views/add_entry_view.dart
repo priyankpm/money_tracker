@@ -1,17 +1,19 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:money_tracker/app/models/transaction_model.dart';
 import 'package:money_tracker/app/modules/addEntry/controllers/add_entry_controller.dart';
+import 'package:money_tracker/app/routes/app_pages.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_images.dart';
 import 'package:money_tracker/config/app_loader.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/buttons.dart';
 import 'package:money_tracker/utils/extenstion.dart';
-import 'package:money_tracker/utils/firestore_utils.dart';
 import 'package:money_tracker/utils/snackbar.dart';
 import 'package:money_tracker/utils/textfield.dart';
 
@@ -22,23 +24,7 @@ class AddEntryView extends GetView<AddEntryController> {
   Widget build(BuildContext context) {
     return GetBuilder<AddEntryController>(
       initState: (state) {
-        if (Get.arguments != null) {
-          controller.selectedModel.value = Get.arguments["selectedData"];
-          controller.type.value =
-              Get.arguments["selectedData"].type ?? "Income";
-          controller.amountController.text =
-              Get.arguments["selectedData"].amount ?? "";
-          controller.titleController.text =
-              Get.arguments["selectedData"].category ?? "";
-          controller.descriptionController.text =
-              Get.arguments["selectedData"].note ?? "";
-          controller.dateController =
-              TextEditingController(
-                text: DateFormat(
-                  'EEE, dd MMM yyyy',
-                ).format(Get.arguments["selectedData"].date ?? DateTime.now()),
-              ).obs;
-        }
+        controller.updateFields();
       },
       builder: (con) {
         return Stack(
@@ -186,103 +172,119 @@ class AddEntryView extends GetView<AddEntryController> {
 
                                 AppText.category.styleMedium(size: 14.sp),
                                 5.h.addHSpace(),
-                                Obx(
-                                  () => Row(
-                                    children: [
-                                      Get.arguments != null &&
-                                              !controller
-                                                  .getCategoryLoading
-                                                  .value &&
-                                              controller
-                                                  .categoryModel
-                                                  .isNotEmpty
-                                          ? Expanded(
-                                            flex: 6,
-                                            child: CustomDropdown<String>.search(
-                                              decoration:
-                                                  CustomDropdownDecoration(
-                                                    expandedFillColor: AppColors.whiteColor,
-                                                     expandedBorder: Border.all(color: AppColors.primaryColor),
-                                                    closedBorderRadius:
-                                                        BorderRadius.circular(8.r),
-                                                    closedBorder: Border.all(
-                                                      color: AppColors.greyColor,
-                                                      width: 0.7,
+                                SizedBox(
+                                  height: 55,
+                                  child: Obx(
+                                    () => Row(
+                                      children: [
+                                        Get.arguments != null &&
+                                                !controller
+                                                    .getCategoryLoading
+                                                    .value &&
+                                                controller
+                                                    .categoryModel
+                                                    .isNotEmpty
+                                            ? Expanded(
+                                              flex: 6,
+                                              child: CustomDropdown<
+                                                String
+                                              >.search(
+                                                decoration:
+                                                    CustomDropdownDecoration(
+                                                      expandedFillColor:
+                                                          AppColors.whiteColor,
+                                                      expandedBorder: Border.all(
+                                                        color:
+                                                            AppColors
+                                                                .primaryColor,
+                                                      ),
+                                                      closedBorderRadius:
+                                                          BorderRadius.circular(
+                                                            8.r,
+                                                          ),
+                                                      closedBorder: Border.all(
+                                                        color:
+                                                            AppColors.greyColor,
+                                                        width: 0.7,
+                                                      ),
                                                     ),
-                                                  ),
-                                              hintText: 'Select category',
-                                              items:
-                                                  controller.categoryModel.map((category) => category.title,).toList(),
-                                              excludeSelected: false,
-                                              initialItem:
+                                                hintText: 'Select category',
+                                                items:
+                                                    controller.categoryModel
+                                                        .map(
+                                                          (category) =>
+                                                              category.title,
+                                                        )
+                                                        .toList(),
+                                                excludeSelected: false,
+                                                initialItem:
+                                                    controller
+                                                        .titleController
+                                                        .text,
+                                                onChanged: (value) {
                                                   controller
                                                       .titleController
-                                                      .text,
-                                              onChanged: (value) {
-                                                controller
-                                                    .titleController
-                                                    .text = value ?? "";
-                                              },
-
-                                            ),
-                                          )
-                                          : Expanded(
-                                            flex: 6,
-                                            child: CustomDropdown<
-                                              String
-                                            >.search(
-                                              decoration:
-                                                  CustomDropdownDecoration(
-                                                    closedBorderRadius:
-                                                        BorderRadius.circular(
-                                                          8.r,
-                                                        ),
-                                                    closedBorder: Border.all(
-                                                      color:
-                                                          AppColors.greyColor,
-                                                      width: 0.7,
+                                                      .text = value ?? "";
+                                                },
+                                              ),
+                                            )
+                                            : Expanded(
+                                              flex: 6,
+                                              child: CustomDropdown<
+                                                String
+                                              >.search(
+                                                decoration:
+                                                    CustomDropdownDecoration(
+                                                      closedBorderRadius:
+                                                          BorderRadius.circular(
+                                                            8.r,
+                                                          ),
+                                                      closedBorder: Border.all(
+                                                        color:
+                                                            AppColors.greyColor,
+                                                        width: 0.7,
+                                                      ),
                                                     ),
-                                                  ),
-                                              hintText: 'Select category',
-                                              items:
-                                                  controller.categoryModel
-                                                      .map(
-                                                        (category) =>
-                                                            category.title,
-                                                      )
-                                                      .toList(),
-                                              excludeSelected: false,
+                                                hintText: 'Select category',
+                                                items:
+                                                    controller.categoryModel
+                                                        .map(
+                                                          (category) =>
+                                                              category.title,
+                                                        )
+                                                        .toList(),
+                                                excludeSelected: false,
 
-                                              onChanged: (value) {
-                                                controller
-                                                    .titleController
-                                                    .text = value ?? "";
-                                              },
+                                                onChanged: (value) {
+                                                  controller
+                                                      .titleController
+                                                      .text = value ?? "";
+                                                },
+                                              ),
                                             ),
-                                          ),
-                                      SizedBox(width: 10.w),
-                                      Expanded(
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            showAddCategoryDialog(context);
-                                          },
-                                          child: Container(
-                                            height: 45.h,
-                                            decoration: BoxDecoration(
-                                              color: AppColors.primaryColor,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Icon(
-                                              Icons.add,
-                                              color: AppColors.whiteColor,
+                                        SizedBox(width: 10.w),
+                                        Expanded(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              showAddCategoryDialog(context);
+                                            },
+                                            child: Container(
+                                              height: 45.h,
+                                              decoration: BoxDecoration(
+                                                color: AppColors.primaryColor,
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: Icon(
+                                                Icons.add,
+                                                color: AppColors.whiteColor,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
-
                                 10.h.addHSpace(),
                                 AppText.amountText.styleMedium(size: 14.sp),
                                 5.h.addHSpace(),
@@ -318,6 +320,126 @@ class AddEntryView extends GetView<AddEntryController> {
                                   controller: controller.dateController.value,
                                   labelText: AppText.date,
                                 ),
+                                controller.file.value == null
+                                    ? 20.h.addHSpace()
+                                    : 10.h.addHSpace(),
+                                AppText.attachment.styleMedium(size: 14.sp),
+                                5.h.addHSpace(),
+                                Obx(() {
+                                  return controller.file.value != null ||
+                                          (Get.arguments != null &&
+                                              controller
+                                                  .imageUrl
+                                                  .value
+                                                  .isNotEmpty)
+                                      ? Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                if (((controller.file.value?.path.toString().split(".").last) == "pdf" ||
+                                                    controller.file.value?.path.toString().split(".").last == "doc" ||
+                                                    controller.file.value?.path.toString().split(".").last == "docx") ||
+                                                    (controller.imageUrl.value.toString().split(".").last) == "pdf" ||
+                                                   controller.imageUrl.value.toString().split(".").last == "doc" ||
+                                                   controller.imageUrl.value.toString().split(".").last == "docx") {
+
+                                                  controller.openFileFromUrl(controller.imageUrl.value);
+
+                                                } else {
+                                                  Get.toNamed(
+                                                    Routes.IMAGEPRIVEW, arguments: {"file": controller.file.value,
+                                                    if (Get.arguments != null)
+                                                      "imageUrl": controller.selectedModel.value!.attachment,
+                                                    },
+                                                  );
+                                                }
+                                              },
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.remove_red_eye,
+                                                    size: 20.sp,
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                  ),
+                                                  5.w.addWSpace(),
+                                                  Expanded(
+                                                    child: (controller
+                                                                .file
+                                                                .value
+                                                                ?.path ??
+                                                            controller
+                                                                .imageUrl
+                                                                .value)
+                                                        .styleBold(
+                                                          overflow:
+                                                              TextOverflow
+                                                                  .ellipsis,
+                                                          color:
+                                                              AppColors
+                                                                  .primaryColor,
+                                                          size: 14.sp,
+                                                        ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          IconButton(
+                                            onPressed: () {
+                                              controller.file.value = null;
+                                              controller.imageUrl.value = '';
+                                            },
+                                            icon: Image.asset(
+                                              AppImages.deleteAccount,
+                                              height: 28.h,
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                      : GestureDetector(
+                                        onTap: () {
+                                          controller.pickFile();
+                                        },
+                                        child: Container(
+                                          color: Colors.transparent,
+                                          height: 50,
+                                          child: DottedBorder(
+                                            options:
+                                                RoundedRectDottedBorderOptions(
+                                                  dashPattern: [5, 3],
+                                                  strokeWidth: 0.7,
+                                                  radius: Radius.circular(8.r),
+                                                ),
+                                            child: Center(
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Icon(
+                                                    Icons.add,
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                  ),
+                                                  5.w.addWSpace(),
+                                                  AppText.addAttachment
+                                                      .styleMedium(
+                                                        color:
+                                                            AppColors
+                                                                .primaryColor,
+                                                        size: 16.sp,
+                                                      ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                }),
+
                                 20.h.addHSpace(),
                                 Obx(
                                   () => AppButton(

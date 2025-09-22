@@ -1,4 +1,11 @@
+import 'dart:developer';
+import 'dart:io';
+import 'package:dio/dio.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:money_tracker/app/models/category_model.dart';
@@ -8,13 +15,20 @@ import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/firestore_utils.dart';
 import 'package:money_tracker/utils/snackbar.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 
 class AddEntryController extends GetxController {
+  final FirebaseStorage _storage = FirebaseStorage.instance;
   final amountController = TextEditingController();
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
-  var dateController = TextEditingController(text: DateFormat('EEE, dd MMM yyyy').format(DateTime.now()),).obs;
+  var dateController =
+      TextEditingController(
+        text: DateFormat('EEE, dd MMM yyyy').format(DateTime.now()),
+      ).obs;
   RxString type = "Income".obs;
+  RxString imageUrl = "".obs;
   List<String> types = ["Income", "Expense"];
   var isLoading = false.obs;
   var deleteLoading = false.obs;
@@ -23,11 +37,29 @@ class AddEntryController extends GetxController {
   RxList<CategoryModel> categoryModel = <CategoryModel>[].obs;
   Rxn<TransactionModel> selectedModel = Rxn<TransactionModel>();
   Rx<UserModel?> userModel = Rx<UserModel?>(null);
+  Rx<File?> file = Rx<File?>(null);
 
   @override
   void onInit() {
     initData();
     super.onInit();
+  }
+
+  updateFields() {
+    if (Get.arguments != null) {
+      selectedModel.value = Get.arguments["selectedData"];
+      type.value = Get.arguments["selectedData"].type ?? "Income";
+      imageUrl.value = Get.arguments["selectedData"].attachment ?? "";
+      amountController.text = Get.arguments["selectedData"].amount ?? "";
+      titleController.text = Get.arguments["selectedData"].category ?? "";
+      descriptionController.text = Get.arguments["selectedData"].note ?? "";
+      dateController =
+          TextEditingController(
+            text: DateFormat(
+              'EEE, dd MMM yyyy',
+            ).format(Get.arguments["selectedData"].date ?? DateTime.now()),
+          ).obs;
+    }
   }
 
   initData() async {
@@ -95,6 +127,12 @@ class AddEntryController extends GetxController {
     try {
       isLoading.value = true;
 
+      String url = "";
+
+      if (file.value != null) {
+        url = await uploadFile() ?? "";
+      }
+
       DateTime selectedDate = DateFormat(
         'EEE, dd MMM yyyy',
       ).parse(dateController.value.text);
@@ -116,18 +154,19 @@ class AddEntryController extends GetxController {
         'date': dateTimeWithCurrentTime,
         'amount': amountController.value.text,
         'uid': FireStoreUtils.getCurrentUid(),
+        'attachment': url,
       });
 
       if (isAdded) {
         if (type.value.toLowerCase() == 'income') {
           final totalBalance =
               double.parse(userModel.value?.totalIncome.toString() ?? '0.0') +
-                  double.parse(amountController.value.text);
+              double.parse(amountController.value.text);
           await FireStoreUtils.updateUser({'totalIncome': totalBalance});
         } else {
           final totalBalance =
               double.parse(userModel.value?.totalExpense.toString() ?? '0.0') +
-                  double.parse(amountController.value.text);
+              double.parse(amountController.value.text);
           await FireStoreUtils.updateUser({'totalExpense': totalBalance});
         }
 
@@ -137,7 +176,6 @@ class AddEntryController extends GetxController {
         );
 
         Get.back(result: true);
-
       } else {
         CommonSnackbar.showSnackbar(
           message: AppText.addTransactionFailed,
@@ -168,6 +206,12 @@ class AddEntryController extends GetxController {
 
       isLoading.value = true;
 
+      String url = imageUrl.value;
+
+      if (file.value != null) {
+        url = await uploadFile() ?? "";
+      }
+
       DateTime selectedDate = DateFormat(
         'EEE, dd MMM yyyy',
       ).parse(dateController.value.text);
@@ -189,18 +233,25 @@ class AddEntryController extends GetxController {
         'date': dateTimeWithCurrentTime,
         'amount': amountController.value.text,
         'uid': FireStoreUtils.getCurrentUid(),
+        'url': url,
       }, selectedModel.value?.id ?? "");
 
       if (isAdded) {
         if (type.value.toLowerCase() == 'income') {
           final totalBalance =
-              (double.parse(userModel.value?.totalIncome.toString() ?? '0.0') - double.parse(selectedModel.value?.amount.toString() ?? '0.0')) +
-                  double.parse(amountController.value.text);
+              (double.parse(userModel.value?.totalIncome.toString() ?? '0.0') -
+                  double.parse(
+                    selectedModel.value?.amount.toString() ?? '0.0',
+                  )) +
+              double.parse(amountController.value.text);
           await FireStoreUtils.updateUser({'totalIncome': totalBalance});
         } else {
           final totalBalance =
-              (double.parse(userModel.value?.totalExpense.toString() ?? '0.0') - double.parse(selectedModel.value?.amount.toString() ?? '0.0')) +
-                  double.parse(amountController.value.text);
+              (double.parse(userModel.value?.totalExpense.toString() ?? '0.0') -
+                  double.parse(
+                    selectedModel.value?.amount.toString() ?? '0.0',
+                  )) +
+              double.parse(amountController.value.text);
 
           await FireStoreUtils.updateUser({'totalExpense': totalBalance});
         }
@@ -249,24 +300,25 @@ class AddEntryController extends GetxController {
   Future<void> deleteTransaction(String id) async {
     try {
       deleteLoading.value = true;
-
       bool isAdded = await FireStoreUtils.deleteTransaction(id);
-
       if (isAdded) {
-
         if (type.value.toLowerCase() == 'income') {
           final totalBalance =
-              (double.parse(userModel.value?.totalIncome.toString() ?? '0.0') - double.parse(selectedModel.value?.amount.toString() ?? '0.0'));
+              (double.parse(userModel.value?.totalIncome.toString() ?? '0.0') -
+                  double.parse(
+                    selectedModel.value?.amount.toString() ?? '0.0',
+                  ));
           await FireStoreUtils.updateUser({'totalIncome': totalBalance});
         } else {
           final totalBalance =
-              (double.parse(userModel.value?.totalExpense.toString() ?? '0.0') - double.parse(selectedModel.value?.amount.toString() ?? '0.0'));
-
+              (double.parse(userModel.value?.totalExpense.toString() ?? '0.0') -
+                  double.parse(
+                    selectedModel.value?.amount.toString() ?? '0.0',
+                  ));
           await FireStoreUtils.updateUser({'totalExpense': totalBalance});
         }
 
         Get.back(result: true);
-
         CommonSnackbar.showSnackbar(
           message: AppText.deleteTransactionSuccess,
           type: SnackbarType.success,
@@ -280,6 +332,55 @@ class AddEntryController extends GetxController {
       }
     } finally {
       deleteLoading.value = false;
+    }
+  }
+
+  Future<void> pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx'],
+    );
+    if (result != null && result.files.single.path != null) {
+      file.value = File(result.files.single.path!);
+    }
+  }
+
+  Future<String?> uploadFile() async {
+    try {
+      String userId = FireStoreUtils.getCurrentUid();
+      final ref = _storage.ref().child(
+        '$userId/attachment.${file.value!.path.split(".").last}',
+      );
+      await ref.putFile(file.value!);
+      final downloadUrl = await ref.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<void> openAssetFile(String assetPath, String filename) async {
+    final bytes = await rootBundle.load(assetPath);
+    final dir = await getTemporaryDirectory();
+    final file = File('${dir.path}/$filename');
+    await file.writeAsBytes(bytes.buffer.asUint8List());
+    await OpenFile.open(file.path);
+  }
+
+  Future<void> openFileFromUrl(String url) async {
+    try {
+      final Dio dio = Dio();
+
+      final dir = await getTemporaryDirectory();
+      final fileName = url.split('/').last;
+      final filePath = '${dir.path}/$fileName';
+      await dio.download(url, filePath);
+      final result = await OpenFile.open(filePath);
+      if (result.type != ResultType.done) {
+        log('Could not open file: ${result.message}');
+      }
+    } catch (e) {
+      log('Error opening file: $e');
     }
   }
 }
