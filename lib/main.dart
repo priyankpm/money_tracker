@@ -17,7 +17,6 @@ Future<void> main() async {
       splitScreenMode: true,
       useInheritedMediaQuery: true,
       rebuildFactor: (old, data) => true,
-
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(fontFamily: "Montserrat"),

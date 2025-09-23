@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:money_tracker/config/app_categories.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_images.dart';
 import 'package:money_tracker/config/app_loader.dart';
@@ -11,6 +12,7 @@ import 'package:money_tracker/utils/no_data_widgets.dart';
 import 'package:money_tracker/utils/snackbar.dart';
 import 'package:money_tracker/utils/textfield.dart';
 
+import '../../../../config/app_categories.dart';
 import '../controllers/add_entry_controller.dart';
 
 class SelectCategoryView extends GetView<AddEntryController> {
@@ -233,7 +235,7 @@ class SelectCategoryView extends GetView<AddEntryController> {
 
   Future<dynamic> addCategory(BuildContext context) {
     final textController = TextEditingController();
-    controller.updateSelectedIcon("");
+    controller.updateSelectedIcon(<String, dynamic>{});
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -279,21 +281,20 @@ class SelectCategoryView extends GetView<AddEntryController> {
                               ),
                           shrinkWrap: true,
                           padding: EdgeInsets.zero,
-                          itemCount: controller.categoryIcons.length,
+                          itemCount: categoryIcons.length,
                           itemBuilder:
                               (context, index) => Obx(
                                 () => GestureDetector(
-                                  onTap: () {
-                                    con.updateSelectedIcon(
-                                      controller.categoryIcons[index],
-                                    );
-                                  },
+                                  onTap:
+                                      () => con.updateSelectedIcon(
+                                        categoryIcons[index],
+                                      ),
                                   child: Container(
                                     margin: EdgeInsets.all(5),
                                     decoration: BoxDecoration(
                                       color:
-                                          controller.categoryIcons[index] ==
-                                                  controller.selectedIcon.value
+                                          categoryIcons[index]["id"] ==
+                                                  controller.selectedIcon["id"]
                                               ? AppColors.primaryColor
                                               : AppColors.whiteColor,
                                       borderRadius: BorderRadius.circular(10.r),
@@ -302,7 +303,8 @@ class SelectCategoryView extends GetView<AddEntryController> {
                                       ),
                                     ),
                                     child: Center(
-                                      child: controller.categoryIcons[index]
+                                      child:categoryIcons[index]["icon"]
+                                          .toString()
                                           .styleSemiBold(size: 22.sp),
                                     ),
                                   ),
@@ -328,7 +330,7 @@ class SelectCategoryView extends GetView<AddEntryController> {
                       Obx(() {
                         return AppButton(
                           onTap: () async {
-                            if (con.selectedIcon.value.isEmpty) {
+                            if (con.selectedIcon["icon"].isEmpty) {
                               return CommonSnackbar.showSnackbar(
                                 message: AppText.pleaseSelectIcon,
                                 type: SnackbarType.error,
@@ -344,7 +346,8 @@ class SelectCategoryView extends GetView<AddEntryController> {
                             await con
                                 .addCategory(
                                   textController.text,
-                                  controller.selectedIcon.value,
+                                  controller.selectedIcon["icon"],
+                                  controller.selectedIcon["id"],
                                 )
                                 .then((value) => Navigator.pop(context));
                           },

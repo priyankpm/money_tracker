@@ -231,7 +231,7 @@ class FireStoreUtils {
           .map((doc) => TransactionModel.fromJson(doc.data()))
           .toList();
     } catch (e) {
-      log("Error fetching user profile: $e");
+      log("Error to fetching today transaction: $e");
       return null;
     }
   }

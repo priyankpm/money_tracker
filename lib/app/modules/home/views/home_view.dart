@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:money_tracker/app/modules/bottombar/controllers/bottombar_controller.dart';
 import 'package:money_tracker/app/routes/app_pages.dart';
+import 'package:money_tracker/config/app_categories.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_images.dart';
 import 'package:money_tracker/config/app_text.dart';
@@ -271,7 +272,10 @@ class HomeView extends GetView<HomeController> {
                               : ListView.separated(
                                 physics: NeverScrollableScrollPhysics(),
                                 separatorBuilder:
-                                    (context, index) => Divider(height: 30.h),
+                                    (context, index) => Padding(
+                                      padding:  EdgeInsets.symmetric(horizontal: 3.w),
+                                      child: Divider(height: 25.h),
+                                    ),
                                 padding: EdgeInsets.only(bottom: 70.h),
                                 itemCount: controller.recentTransaction.length,
                                 shrinkWrap: true,
@@ -290,38 +294,20 @@ class HomeView extends GetView<HomeController> {
                                       });
                                     },
                                     child: Container(
-                                      color: Colors.transparent,
+                                      padding: EdgeInsets.all(10.h),
+                                      decoration: BoxDecoration(color:AppColors.lightColor,borderRadius: BorderRadius.circular(15.r)),
                                       child: Row(
                                         children: [
                                           Container(
-                                            height: 55.h,
-                                            width: 55.h,
+                                            height: 50.h,
+                                            width: 50.h,
                                             decoration: BoxDecoration(
-                                              color: AppColors.lightColor,
+                                              color: AppColors.secondaryColor,border: Border.all(color: AppColors.primaryColor),
                                               borderRadius:
                                                   BorderRadius.circular(10.r),
                                             ),
                                             child: Center(
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  getDayAndDate(
-                                                    data.date,
-                                                  )["date"]!.styleBold(
-                                                    size: 20.sp,
-                                                    color:
-                                                        AppColors.primaryColor,
-                                                  ),
-                                                  getDayAndDate(
-                                                    data.date,
-                                                  )["day"]!.styleSemiBold(
-                                                    size: 10.sp,
-                                                    color:
-                                                        AppColors.primaryColor,
-                                                  ),
-                                                ],
-                                              ),
+                                              child: categoryIcons[data.categoryId - 1]["icon"].toString().styleMedium(size: 25.sp),
                                             ),
                                           ),
                                           10.w.addWSpace(),

@@ -5,6 +5,7 @@ import 'package:money_tracker/app/models/transaction_model.dart';
 import 'package:money_tracker/app/modules/bottombar/controllers/bottombar_controller.dart';
 import 'package:money_tracker/app/modules/home/controllers/home_controller.dart';
 import 'package:money_tracker/app/routes/app_pages.dart';
+import 'package:money_tracker/config/app_categories.dart';
 import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/extenstion.dart';
@@ -248,8 +249,11 @@ class HistoryView extends GetView<HistoryController> {
                 )
                 : ListView.separated(
                   physics: NeverScrollableScrollPhysics(),
-                  separatorBuilder: (context, index) => Divider(height: 30.h),
-                  padding: EdgeInsets.only(bottom: 20.h),
+                  separatorBuilder: (context, index) => Padding(
+                    padding:  EdgeInsets.symmetric(horizontal: 3.w),
+                    child: Divider(height: 25.h),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 15.h),
                   itemCount: controller.filteredTransactions.length,
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
@@ -267,33 +271,20 @@ class HistoryView extends GetView<HistoryController> {
                           }
                         });
                       },
-                      child: Container(
-                        color: Colors.transparent,
+                      child: Container(padding: EdgeInsets.all(10.h),
+                        decoration: BoxDecoration(color:AppColors.lightColor,borderRadius: BorderRadius.circular(15.r)),
                         child: Row(
                           children: [
                             Container(
-                              height: 55.h,
-                              width: 55.h,
+                              height: 50.h,
+                              width: 50.h,
                               decoration: BoxDecoration(
-                                color: AppColors.lightColor,
-                                borderRadius: BorderRadius.circular(10.r),
+                                color: AppColors.secondaryColor,border: Border.all(color: AppColors.primaryColor),
+                                borderRadius:
+                                BorderRadius.circular(10.r),
                               ),
                               child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    getDayAndDate(data.date)["date"]!.styleBold(
-                                      size: 20.sp,
-                                      color: AppColors.primaryColor,
-                                    ),
-                                    getDayAndDate(
-                                      data.date,
-                                    )["day"]!.styleSemiBold(
-                                      size: 10.sp,
-                                      color: AppColors.primaryColor,
-                                    ),
-                                  ],
-                                ),
+                                child: categoryIcons[data.categoryId - 1]["icon"].toString().styleMedium(size: 25.sp),
                               ),
                             ),
                             10.w.addWSpace(),

@@ -7,6 +7,7 @@ class TransactionModel {
   final String note;
   final String type;
   final String category;
+  final int categoryId;
   final String attachment;
   final DateTime date;
 
@@ -14,6 +15,7 @@ class TransactionModel {
     required this.id,
     required this.uid,
     required this.amount,
+    required this.categoryId,
     required this.note,
     required this.type,
     required this.category,
@@ -30,6 +32,7 @@ class TransactionModel {
       type: json['type'] ?? '',
       category: json['category'] ?? '',
       attachment: json['attachment'] ?? '',
+      categoryId: json['category_id'] ?? 1,
       date: (json['date'] as Timestamp).toDate(),
     );
   }
@@ -42,6 +45,7 @@ class TransactionModel {
       'note': note,
       'type': type,
       'attachment': attachment,
+      'category_id': categoryId,
       'category': category,
       'date': Timestamp.fromDate(date),
     };

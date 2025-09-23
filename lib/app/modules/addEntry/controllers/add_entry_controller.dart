@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -33,32 +32,11 @@ class AddEntryController extends GetxController {
   Rxn<TransactionModel> selectedModel = Rxn<TransactionModel>();
   Rx<UserModel?> userModel = Rx<UserModel?>(null);
   Rx<File?> file = Rx<File?>(null);
-  RxString selectedIcon = "".obs;
+  RxMap<String, dynamic> selectedIcon = <String, dynamic>{}.obs;
   RxString icon = "".obs;
 
   Rxn<CategoryModel> selectedCategory = Rxn<CategoryModel>();
   Rxn<CategoryModel> tempSelectedCategory = Rxn<CategoryModel>();
-
-  final categoryIcons = [
-    "🍔",
-    "🛒",
-    "🚗",
-    "⛽",
-    "🎬",
-    "🎮",
-    "💡",
-    "🏠",
-    "📱",
-    "💊",
-    "🎓",
-    "🛍️",
-    "👕",
-    "💆",
-    "🏋️",
-    "🎁",
-    "✈️",
-    "💼",
-  ];
 
   @override
   void onInit() {
@@ -118,7 +96,7 @@ class AddEntryController extends GetxController {
         'EEE, dd MMM yyyy',
       ).parse(dateController.value.text),
       firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
+      lastDate: DateTime.now(),
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -163,18 +141,12 @@ class AddEntryController extends GetxController {
 
     try {
       isLoading.value = true;
-
       String docId = await FireStoreUtils.createTransaction();
-
       String url = "";
-
       if (file.value != null) {
         url = await uploadFile(docId) ?? "";
       }
-
-      DateTime selectedDate = DateFormat(
-        'EEE, dd MMM yyyy',
-      ).parse(dateController.value.text);
+      DateTime selectedDate = DateFormat('EEE, dd MMM yyyy').parse(dateController.value.text);
       final now = DateTime.now();
 
       final dateTimeWithCurrentTime = DateTime(
@@ -183,12 +155,13 @@ class AddEntryController extends GetxController {
         selectedDate.day,
         now.hour,
         now.minute,
-        now.second,
+        now.second
       );
 
       bool isAdded = await FireStoreUtils.addTransaction({
         'type': type.value,
         'category': selectedCategory.value?.title,
+        'category_id' : selectedCategory.value?.categoryId,
         'note': descriptionController.text,
         'date': dateTimeWithCurrentTime,
         'amount': amountController.value.text,
@@ -268,6 +241,7 @@ class AddEntryController extends GetxController {
       bool isAdded = await FireStoreUtils.updateTransaction({
         'type': type.value,
         'category': selectedCategory.value?.title,
+        'category_id' : selectedCategory.value?.categoryId,
         'note': descriptionController.text,
         'date': dateTimeWithCurrentTime,
         'amount': amountController.value.text,
@@ -310,13 +284,14 @@ class AddEntryController extends GetxController {
     }
   }
 
-  Future<void> addCategory(String title, String icon) async {
+  Future<void> addCategory(String title, String icon,int categoryId) async {
     try {
       categoryLoading.value = true;
 
       bool isAdded = await FireStoreUtils.addCategory({
         'title': title,
         'icon': icon,
+        'category_id': categoryId,
         'date': DateTime.now(),
       });
 

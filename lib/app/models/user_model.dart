@@ -33,8 +33,8 @@ class UserModel {
       phoneNumber: json['phoneNumber'],
       email: json['email'],
       lastname: json['lastname'],
-      totalExpense: json['totalExpense'] ?? 0,
-      totalIncome: json['totalIncome'] ?? 0,
+      totalExpense: json['totalExpense'].toDouble() ?? 0,
+      totalIncome: json['totalIncome'].toDouble() ?? 0,
     );
   }
 

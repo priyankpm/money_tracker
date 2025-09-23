@@ -74,6 +74,13 @@ class AppText {
   /// HISTORY
   static const String transactionsHistory = "Transactions History";
 
+
+  /// CHARTS
+  static const String totalIncome = "Total Income";
+  static const String spendAnalytics = "Spend Analytics";
+  static const String incomeExpense = "Income vs Expense";
+
+
   /// MSGs
 
   static const String loginSuccess = "Login successfully";
