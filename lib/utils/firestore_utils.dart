@@ -162,20 +162,29 @@ class FireStoreUtils {
   }
 
   /// ADD TRANSACTION
-  static Future<bool> addTransaction(Map<String, dynamic> transaction) async {
+
+  static Future<String> createTransaction() async {
+    final uid = getCurrentUid();
+    final doc = await fireStore
+        .collection(CollectionName.kUserCollection)
+        .doc(uid)
+        .collection(CollectionName.kTransactions)
+        .add({'createdAt': DateTime.now()});
+    return doc.id;
+  }
+
+  static Future<bool> addTransaction(
+    Map<String, dynamic> transaction,
+    String id,
+  ) async {
     try {
       final uid = getCurrentUid();
-      final doc = await fireStore
-          .collection(CollectionName.kUserCollection)
-          .doc(uid)
-          .collection(CollectionName.kTransactions)
-          .add({'createdAt': DateTime.now()});
-      transaction.addEntries([MapEntry('id', doc.id)]);
+      transaction.addEntries([MapEntry('id', id)]);
       await fireStore
           .collection(CollectionName.kUserCollection)
           .doc(uid)
           .collection(CollectionName.kTransactions)
-          .doc(doc.id)
+          .doc(id)
           .set(transaction);
       return true;
     } catch (e) {

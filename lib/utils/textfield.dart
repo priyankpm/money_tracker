@@ -3,20 +3,21 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:money_tracker/config/app_color.dart';
 
 class AppTextField extends StatelessWidget {
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final String labelText;
   final TextInputType? textInputType;
   final TextInputAction? textInputAction;
   final int? maxLines;
   final int? minLines;
   final Widget? suffix;
+  final Widget? prefix;
   final bool? readonly;
   final void Function()? onTap;
   final int? maxLength;
 
   const AppTextField({
     super.key,
-    required this.controller,
+    this.controller,
     required this.labelText,
     this.textInputType,
     this.textInputAction,
@@ -26,11 +27,13 @@ class AppTextField extends StatelessWidget {
     this.onTap,
     this.readonly,
     this.maxLength,
+    this.prefix,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(style: TextStyle(fontSize: 16.sp,fontWeight: FontWeight.w500),
+    return TextFormField(
+      style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
       readOnly: readonly ?? false,
       onTap: onTap,
       minLines: minLines ?? 1,
@@ -42,8 +45,12 @@ class AppTextField extends StatelessWidget {
       decoration: InputDecoration(
         counterText: '',
         suffixIcon: suffix,
+        prefixIcon: prefix,
         contentPadding: EdgeInsets.all(14.h),
-        hint: Text(labelText,style: TextStyle(color: AppColors.greyColor.withValues(alpha: 0.8)),),
+        hint: Text(
+          labelText,
+          style: TextStyle(color: AppColors.greyColor.withValues(alpha: 0.8)),
+        ),
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: AppColors.greyColor, width: 0.7),
           borderRadius: BorderRadius.circular(8.r),

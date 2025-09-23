@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:get/get.dart';
+import 'package:money_tracker/app/modules/charts/views/charts_view.dart';
 import 'package:money_tracker/app/modules/historypage/views/history_view.dart';
 import 'package:money_tracker/app/modules/home/views/home_view.dart';
 import 'package:money_tracker/app/modules/profile/views/profile_view.dart';
@@ -22,12 +23,14 @@ class BottombarView extends GetView<BottombarController> {
   final List<String> icons1 = const [
     AppImages.home1,
     AppImages.history1,
+    AppImages.chart1,
     AppImages.profile1,
   ];
 
   final List<Widget> pages = const [
     HomeView(),
     HistoryView(),
+    ChartsView(),
     ProfileView(),
   ];
 
@@ -66,7 +69,7 @@ class BottombarView extends GetView<BottombarController> {
                     selectedColor: AppColors.whiteColor,
                   ),
 
-                  /// Likes
+                  /// History
                   AdvancedSalomonBottomBarItem(
                     icon: SvgPicture.asset(
                       icons1[1],
@@ -81,10 +84,25 @@ class BottombarView extends GetView<BottombarController> {
                     selectedColor: AppColors.whiteColor,
                   ),
 
-                  /// Profile
+                  /// Chart
                   AdvancedSalomonBottomBarItem(
                     icon: SvgPicture.asset(
                       icons1[2],
+                      height: 22.h,
+                      width: 22.h,
+                      color: AppColors.whiteColor,
+                    ),
+                    title: AppText.summary.styleSemiBold(
+                      color: AppColors.whiteColor,
+                      size: 14.sp,
+                    ),
+                    selectedColor: AppColors.whiteColor,
+                  ),
+
+                  /// Profile
+                  AdvancedSalomonBottomBarItem(
+                    icon: SvgPicture.asset(
+                      icons1[3],
                       height: 22.h,
                       width: 22.h,
                       color: AppColors.whiteColor,

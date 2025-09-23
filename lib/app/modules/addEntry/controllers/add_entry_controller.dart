@@ -1,11 +1,9 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:dio/dio.dart';
-import 'package:flutter/services.dart' show rootBundle;
+
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:money_tracker/app/models/category_model.dart';
@@ -15,13 +13,10 @@ import 'package:money_tracker/config/app_color.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/firestore_utils.dart';
 import 'package:money_tracker/utils/snackbar.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 
 class AddEntryController extends GetxController {
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final amountController = TextEditingController();
-  final titleController = TextEditingController();
   final descriptionController = TextEditingController();
   var dateController =
       TextEditingController(
@@ -38,6 +33,32 @@ class AddEntryController extends GetxController {
   Rxn<TransactionModel> selectedModel = Rxn<TransactionModel>();
   Rx<UserModel?> userModel = Rx<UserModel?>(null);
   Rx<File?> file = Rx<File?>(null);
+  RxString selectedIcon = "".obs;
+  RxString icon = "".obs;
+
+  Rxn<CategoryModel> selectedCategory = Rxn<CategoryModel>();
+  Rxn<CategoryModel> tempSelectedCategory = Rxn<CategoryModel>();
+
+  final categoryIcons = [
+    "🍔",
+    "🛒",
+    "🚗",
+    "⛽",
+    "🎬",
+    "🎮",
+    "💡",
+    "🏠",
+    "📱",
+    "💊",
+    "🎓",
+    "🛍️",
+    "👕",
+    "💆",
+    "🏋️",
+    "🎁",
+    "✈️",
+    "💼",
+  ];
 
   @override
   void onInit() {
@@ -51,7 +72,7 @@ class AddEntryController extends GetxController {
       type.value = Get.arguments["selectedData"].type ?? "Income";
       imageUrl.value = Get.arguments["selectedData"].attachment ?? "";
       amountController.text = Get.arguments["selectedData"].amount ?? "";
-      titleController.text = Get.arguments["selectedData"].category ?? "";
+      // categoryController.text = Get.arguments["selectedData"].category ?? "";
       descriptionController.text = Get.arguments["selectedData"].note ?? "";
       dateController =
           TextEditingController(
@@ -64,7 +85,16 @@ class AddEntryController extends GetxController {
 
   initData() async {
     userModel = (await FireStoreUtils.getUserProfile()).obs;
-    getAllCategory();
+    await getAllCategory();
+
+    if (Get.arguments != null) {
+      final selectedData = categoryModel.where(
+        (element) => element.title == Get.arguments["selectedData"].category,
+      );
+      if (selectedData.isNotEmpty) {
+        selectedCategory.value = selectedData.first;
+      }
+    }
   }
 
   Future<void> getAllCategory() async {
@@ -74,6 +104,12 @@ class AddEntryController extends GetxController {
   }
 
   updateType(value) => type.value = value;
+
+  updateSelectedIcon(value) => selectedIcon.value = value;
+
+  updateSelectedCategory(value) {
+    return tempSelectedCategory.value = value;
+  }
 
   Future<void> pickDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -109,16 +145,17 @@ class AddEntryController extends GetxController {
       return;
     }
 
-    if (amountController.text.isEmpty) {
+    if (selectedCategory.value == null) {
       CommonSnackbar.showSnackbar(
-        message: AppText.pleaseAddAmount,
+        message: AppText.pleaseAddCategory,
         type: SnackbarType.error,
       );
       return;
     }
-    if (titleController.text.isEmpty) {
+
+    if (amountController.text.isEmpty) {
       CommonSnackbar.showSnackbar(
-        message: AppText.pleaseAddCategory,
+        message: AppText.pleaseAddAmount,
         type: SnackbarType.error,
       );
       return;
@@ -127,10 +164,12 @@ class AddEntryController extends GetxController {
     try {
       isLoading.value = true;
 
+      String docId = await FireStoreUtils.createTransaction();
+
       String url = "";
 
       if (file.value != null) {
-        url = await uploadFile() ?? "";
+        url = await uploadFile(docId) ?? "";
       }
 
       DateTime selectedDate = DateFormat(
@@ -149,13 +188,13 @@ class AddEntryController extends GetxController {
 
       bool isAdded = await FireStoreUtils.addTransaction({
         'type': type.value,
-        'category': titleController.text,
+        'category': selectedCategory.value?.title,
         'note': descriptionController.text,
         'date': dateTimeWithCurrentTime,
         'amount': amountController.value.text,
         'uid': FireStoreUtils.getCurrentUid(),
         'attachment': url,
-      });
+      }, docId);
 
       if (isAdded) {
         if (type.value.toLowerCase() == 'income') {
@@ -196,7 +235,7 @@ class AddEntryController extends GetxController {
         );
         return;
       }
-      if (titleController.text.isEmpty) {
+      if (selectedCategory.value == null) {
         CommonSnackbar.showSnackbar(
           message: AppText.pleaseAddCategory,
           type: SnackbarType.error,
@@ -209,7 +248,7 @@ class AddEntryController extends GetxController {
       String url = imageUrl.value;
 
       if (file.value != null) {
-        url = await uploadFile() ?? "";
+        url = await uploadFile(selectedModel.value?.id ?? "") ?? "";
       }
 
       DateTime selectedDate = DateFormat(
@@ -228,12 +267,12 @@ class AddEntryController extends GetxController {
 
       bool isAdded = await FireStoreUtils.updateTransaction({
         'type': type.value,
-        'category': titleController.text,
+        'category': selectedCategory.value?.title,
         'note': descriptionController.text,
         'date': dateTimeWithCurrentTime,
         'amount': amountController.value.text,
         'uid': FireStoreUtils.getCurrentUid(),
-        'url': url,
+        'attachment': url,
       }, selectedModel.value?.id ?? "");
 
       if (isAdded) {
@@ -271,12 +310,13 @@ class AddEntryController extends GetxController {
     }
   }
 
-  Future<void> addCategory(String title) async {
+  Future<void> addCategory(String title, String icon) async {
     try {
       categoryLoading.value = true;
 
       bool isAdded = await FireStoreUtils.addCategory({
         'title': title,
+        'icon': icon,
         'date': DateTime.now(),
       });
 
@@ -285,7 +325,7 @@ class AddEntryController extends GetxController {
           message: AppText.addCategorySuccess,
           type: SnackbarType.success,
         );
-        getAllCategory();
+        categoryModel.value = (await FireStoreUtils.getAllCategory() ?? []);
       } else {
         CommonSnackbar.showSnackbar(
           message: AppText.addCategoryFailed,
@@ -345,42 +385,17 @@ class AddEntryController extends GetxController {
     }
   }
 
-  Future<String?> uploadFile() async {
+  Future<String?> uploadFile(String id) async {
     try {
       String userId = FireStoreUtils.getCurrentUid();
       final ref = _storage.ref().child(
-        '$userId/attachment.${file.value!.path.split(".").last}',
+        '$userId/${id}_attachment.${file.value!.path.split(".").last}',
       );
       await ref.putFile(file.value!);
       final downloadUrl = await ref.getDownloadURL();
       return downloadUrl;
     } catch (e) {
       return null;
-    }
-  }
-
-  Future<void> openAssetFile(String assetPath, String filename) async {
-    final bytes = await rootBundle.load(assetPath);
-    final dir = await getTemporaryDirectory();
-    final file = File('${dir.path}/$filename');
-    await file.writeAsBytes(bytes.buffer.asUint8List());
-    await OpenFile.open(file.path);
-  }
-
-  Future<void> openFileFromUrl(String url) async {
-    try {
-      final Dio dio = Dio();
-
-      final dir = await getTemporaryDirectory();
-      final fileName = url.split('/').last;
-      final filePath = '${dir.path}/$fileName';
-      await dio.download(url, filePath);
-      final result = await OpenFile.open(filePath);
-      if (result.type != ResultType.done) {
-        log('Could not open file: ${result.message}');
-      }
-    } catch (e) {
-      log('Error opening file: $e');
     }
   }
 }

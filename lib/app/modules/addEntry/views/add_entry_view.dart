@@ -1,11 +1,7 @@
-import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
-import 'package:money_tracker/app/models/transaction_model.dart';
 import 'package:money_tracker/app/modules/addEntry/controllers/add_entry_controller.dart';
 import 'package:money_tracker/app/routes/app_pages.dart';
 import 'package:money_tracker/config/app_color.dart';
@@ -14,8 +10,8 @@ import 'package:money_tracker/config/app_loader.dart';
 import 'package:money_tracker/config/app_text.dart';
 import 'package:money_tracker/utils/buttons.dart';
 import 'package:money_tracker/utils/extenstion.dart';
-import 'package:money_tracker/utils/snackbar.dart';
 import 'package:money_tracker/utils/textfield.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AddEntryView extends GetView<AddEntryController> {
   const AddEntryView({super.key});
@@ -172,119 +168,58 @@ class AddEntryView extends GetView<AddEntryController> {
 
                                 AppText.category.styleMedium(size: 14.sp),
                                 5.h.addHSpace(),
-                                SizedBox(
-                                  height: 55,
-                                  child: Obx(
-                                    () => Row(
-                                      children: [
-                                        Get.arguments != null &&
-                                                !controller
-                                                    .getCategoryLoading
-                                                    .value &&
-                                                controller
-                                                    .categoryModel
-                                                    .isNotEmpty
-                                            ? Expanded(
-                                              flex: 6,
-                                              child: CustomDropdown<
-                                                String
-                                              >.search(
-                                                decoration:
-                                                    CustomDropdownDecoration(
-                                                      expandedFillColor:
-                                                          AppColors.whiteColor,
-                                                      expandedBorder: Border.all(
-                                                        color:
-                                                            AppColors
-                                                                .primaryColor,
-                                                      ),
-                                                      closedBorderRadius:
-                                                          BorderRadius.circular(
-                                                            8.r,
-                                                          ),
-                                                      closedBorder: Border.all(
-                                                        color:
-                                                            AppColors.greyColor,
-                                                        width: 0.7,
-                                                      ),
-                                                    ),
-                                                hintText: 'Select category',
-                                                items:
-                                                    controller.categoryModel
-                                                        .map(
-                                                          (category) =>
-                                                              category.title,
-                                                        )
-                                                        .toList(),
-                                                excludeSelected: false,
-                                                initialItem:
-                                                    controller
-                                                        .titleController
-                                                        .text,
-                                                onChanged: (value) {
-                                                  controller
-                                                      .titleController
-                                                      .text = value ?? "";
-                                                },
-                                              ),
-                                            )
-                                            : Expanded(
-                                              flex: 6,
-                                              child: CustomDropdown<
-                                                String
-                                              >.search(
-                                                decoration:
-                                                    CustomDropdownDecoration(
-                                                      closedBorderRadius:
-                                                          BorderRadius.circular(
-                                                            8.r,
-                                                          ),
-                                                      closedBorder: Border.all(
-                                                        color:
-                                                            AppColors.greyColor,
-                                                        width: 0.7,
-                                                      ),
-                                                    ),
-                                                hintText: 'Select category',
-                                                items:
-                                                    controller.categoryModel
-                                                        .map(
-                                                          (category) =>
-                                                              category.title,
-                                                        )
-                                                        .toList(),
-                                                excludeSelected: false,
 
-                                                onChanged: (value) {
-                                                  controller
-                                                      .titleController
-                                                      .text = value ?? "";
-                                                },
+                                Obx(() {
+                                  return AppTextField(
+                                    textInputType: TextInputType.number,
+                                    labelText: "",
+                                    readonly: true,
+                                    prefix: Padding(
+                                      padding: EdgeInsets.all(14.h),
+                                      child:
+                                          controller.selectedCategory.value ==
+                                                  null
+                                              ? Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  AppText.selectCategory,
+                                                  style: TextStyle(
+                                                    color: AppColors.greyColor
+                                                        .withValues(alpha: 0.8),
+                                                  ),
+                                                ),
+                                              )
+                                              : Align(
+                                                alignment: Alignment.centerLeft,
+                                                child:
+                                                    "${(controller.selectedCategory.value?.icon)}  ${(controller.selectedCategory.value?.title)}"
+                                                        .styleMedium(),
                                               ),
-                                            ),
-                                        SizedBox(width: 10.w),
-                                        Expanded(
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              showAddCategoryDialog(context);
-                                            },
-                                            child: Container(
-                                              height: 45.h,
-                                              decoration: BoxDecoration(
-                                                color: AppColors.primaryColor,
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: Icon(
-                                                Icons.add,
-                                                color: AppColors.whiteColor,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
                                     ),
-                                  ),
-                                ),
+                                    textInputAction: TextInputAction.next,
+                                    suffix: Icon(Icons.navigate_next_sharp),
+                                    onTap: () {
+                                      final val = controller.categoryModel
+                                          .where(
+                                            (element) =>
+                                                element.title.trim() ==
+                                                controller
+                                                    .selectedCategory
+                                                    .value
+                                                    ?.title
+                                                    .trim(),
+                                          );
+                                      if (val.isNotEmpty) {
+                                        controller.updateSelectedCategory(
+                                          val.first,
+                                        );
+                                      } else {
+                                        controller.updateSelectedCategory(null);
+                                      }
+                                      Get.toNamed(Routes.SELECT_CATEGORY);
+                                    },
+                                  );
+                                }),
                                 10.h.addHSpace(),
                                 AppText.amountText.styleMedium(size: 14.sp),
                                 5.h.addHSpace(),
@@ -338,21 +273,67 @@ class AddEntryView extends GetView<AddEntryController> {
                                         children: [
                                           Expanded(
                                             child: GestureDetector(
-                                              onTap: () {
-                                                if (((controller.file.value?.path.toString().split(".").last) == "pdf" ||
-                                                    controller.file.value?.path.toString().split(".").last == "doc" ||
-                                                    controller.file.value?.path.toString().split(".").last == "docx") ||
-                                                    (controller.imageUrl.value.toString().split(".").last) == "pdf" ||
-                                                   controller.imageUrl.value.toString().split(".").last == "doc" ||
-                                                   controller.imageUrl.value.toString().split(".").last == "docx") {
-
-                                                  controller.openFileFromUrl(controller.imageUrl.value);
-
+                                              onTap: () async {
+                                                if ((controller.file.value !=
+                                                            null &&
+                                                        controller
+                                                            .file
+                                                            .value!
+                                                            .path
+                                                            .contains(
+                                                              "com.money.tracker",
+                                                            )
+                                                    ? (controller
+                                                            .file
+                                                            .value!
+                                                            .path
+                                                            .contains('.pdf') ||
+                                                        controller
+                                                            .file
+                                                            .value!
+                                                            .path
+                                                            .contains('.doc') ||
+                                                        controller
+                                                            .file
+                                                            .value!
+                                                            .path
+                                                            .contains('.docx'))
+                                                    : (controller.imageUrl.value
+                                                            .contains("pdf") ||
+                                                        controller
+                                                            .imageUrl
+                                                            .value
+                                                            .contains("doc") ||
+                                                        controller
+                                                            .imageUrl
+                                                            .value
+                                                            .contains(
+                                                              'docx',
+                                                            )))) {
+                                                  if (controller.file.value !=
+                                                      null) {
+                                                  } else {
+                                                    Uri url = Uri.parse(
+                                                      controller.imageUrl.value,
+                                                    );
+                                                    if (!await launchUrl(url)) {
+                                                      throw Exception(
+                                                        'Could not launch $url',
+                                                      );
+                                                    }
+                                                  }
                                                 } else {
                                                   Get.toNamed(
-                                                    Routes.IMAGEPRIVEW, arguments: {"file": controller.file.value,
-                                                    if (Get.arguments != null)
-                                                      "imageUrl": controller.selectedModel.value!.attachment,
+                                                    Routes.IMAGEPRIVEW,
+                                                    arguments: {
+                                                      "file":
+                                                          controller.file.value,
+                                                      if (Get.arguments != null)
+                                                        "imageUrl":
+                                                            controller
+                                                                .selectedModel
+                                                                .value!
+                                                                .attachment,
                                                     },
                                                   );
                                                 }
@@ -486,77 +467,6 @@ class AddEntryView extends GetView<AddEntryController> {
               }
               return SizedBox();
             }),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> showAddCategoryDialog(BuildContext context) async {
-    TextEditingController categoryController = TextEditingController();
-
-    await showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Center(child: AppText.addCategory.styleSemiBold(size: 22.sp)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              10.h.addHSpace(),
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                child: AppTextField(
-                  controller: categoryController,
-                  labelText: "Enter category name",
-                ),
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Get.back(),
-              child: AppText.cancel.styleMedium(color: AppColors.primaryColor),
-            ),
-            Obx(
-              () => ElevatedButton(
-                onPressed: () async {
-                  final categoryName = categoryController.text.trim();
-                  if (controller.categoryModel.any(
-                    (element) =>
-                        element.title.toLowerCase() ==
-                        categoryName.toLowerCase(),
-                  )) {
-                    CommonSnackbar.showSnackbar(
-                      message: AppText.categoryExist,
-                      type: SnackbarType.error,
-                    );
-                  } else {
-                    if (categoryName.isNotEmpty) {
-                      await controller.addCategory(categoryName);
-                      Get.back();
-                    } else {
-                      CommonSnackbar.showSnackbar(
-                        message: AppText.pleaseEnterCategoryName,
-                        type: SnackbarType.error,
-                      );
-                    }
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF1B183E),
-                ),
-                child:
-                    controller.categoryLoading.value
-                        ? IntrinsicWidth(
-                          child: SpinKitThreeBounce(
-                            color: AppColors.whiteColor,
-                            size: 15.h,
-                          ),
-                        )
-                        : AppText.add.styleMedium(color: AppColors.whiteColor),
-              ),
-            ),
           ],
         );
       },

@@ -13,6 +13,8 @@ abstract class Routes {
   static const HISTORY = _Paths.HISTORY;
   static const HISTORYPAGE = _Paths.HISTORYPAGE;
   static const IMAGEPRIVEW = _Paths.IMAGEPRIVEW;
+  static const SELECT_CATEGORY = _Paths.SELECT_CATEGORY;
+  static const CHARTS = _Paths.CHARTS;
 }
 
 abstract class _Paths {
@@ -27,4 +29,6 @@ abstract class _Paths {
   static const HISTORY = '/history';
   static const HISTORYPAGE = '/historypage';
   static const IMAGEPRIVEW = '/imageprivew';
+  static const SELECT_CATEGORY = '/select-category';
+  static const CHARTS = '/charts';
 }

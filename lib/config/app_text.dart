@@ -11,6 +11,7 @@ class AppText {
 
   static const String dashboard = "Dashboard";
   static const String history = "History";
+  static const String summary = "Summary";
   static const String profile = "Profile";
 
   ///LOGIN
@@ -65,6 +66,10 @@ class AppText {
   static const String delete = "Delete";
   static const String addAttachment = "Add Attachment";
   static const String seeAttachment = "See Attachment";
+  static const String selectCategory = "Select Category";
+  static const String selectIcon = "Select Icon";
+  static const String title = "Title";
+  static const String enterTitle = "Enter title";
 
   /// HISTORY
   static const String transactionsHistory = "Transactions History";
@@ -100,4 +105,7 @@ class AppText {
   static const String noExpenseTransaction = "No Expense transaction!";
   static const String pleaseEnterCategoryName = "Please enter category name.";
   static const String categoryExist = "Category already exist.";
+  static const String pleaseEnterTitle = "Please enter title.";
+  static const String pleaseSelectIcon = "Please select icon.";
+  static const String pleaseSelectCategory = "Please select category.";
 }
